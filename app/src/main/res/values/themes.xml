@@ -1,9 +1,31 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
-    <style name="Base.Theme.MyApplication" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
-    </style>
+    <style name="Theme.BetterApp" parent="Theme.MaterialComponents.Light">
+        <!-- Primary Theme Colors -->
+        <item name="colorPrimary">#0031E2</item>
+        <item name="colorOnPrimary">#FFFFFF</item>
+        <item name="colorSecondary">#66A3FF</item>
+        <item name="colorOnSecondary">#FFFFFF</item>
 
-    <style name="Theme.MyApplication" parent="Base.Theme.MyApplication" />
+
+        <!-- Background and Surface -->
+        <item name="android:colorBackground">#FFFFFF</item>
+        <item name="colorSurface">#F7F7F7</item>
+        <item name="colorOnSurface">#101214</item>
+
+        <!-- Text Colors -->
+        <item name="android:textColorPrimary">#212529</item>
+        <item name="android:textColorSecondary">#6C757D</item>
+
+        <!-- Button Styles -->
+        <item name="colorButtonNormal">#0031E2</item>
+
+        <!-- System UI Colors -->
+        <item name="android:statusBarColor">#66A3FF</item>
+        <item name="android:navigationBarColor">#000000</item> <!-- Dark Nav Bar for Visibility -->
+
+
+        <!-- Optional: Set Toolbar and Navigation Appearance -->
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowNoTitle">true</item>
+    </style>
 </resources>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Shadow Layer -->
+    <item>
+        <shape>
+            <solid android:color="#80CCCCCC"  /> <!-- Adjust alpha for transparency -->
+            <corners android:radius="16dp" />
+        </shape>
+    </item>
+
+    <!-- Main Shape Layer -->
+    <item>
+        <shape>
+            <!-- Background Color -->
+            <solid android:color="#EEEEEE" />
+            <padding android:left="6dp"/>
+            <corners android:radius="16dp" />
+        </shape>
+    </item>
+
+</layer-list>

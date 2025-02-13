@@ -1,3 +1,7 @@
 <resources>
-    <string name="app_name">My Application</string>
+    <string name="app_name">Better</string>
+    <string name="monitoring_status">Monitoring Activity...</string>
+    <string name="fall_detected_default">Fall Detected!\nPlease Confirm Status</string>
+    <string name="acknowledge_button">ACKNOWLEDGE</string>
+    <string name="sensor_status_ready">Sensors: Active</string>
 </resources>
