@@ -1,7 +1,18 @@
 <resources>
-    <string name="app_name">Better</string>
+    <!-- Existing strings -->
+    <string name="app_name">BetterApp</string> <!-- Updated app name -->
+    <string name="baking_title">Health assistant</string>
+    <string name="prompt_placeholder">How can I help you?</string>
+    <string name="results_placeholder">AI responses will appear here...</string>
+
+    <!-- New strings for chat functionality -->
+    <string name="label_prompt">Message</string>
+    <string name="action_send">Send</string>
+
+    <!-- New strings for monitoring functionality -->
     <string name="monitoring_status">Monitoring Activity...</string>
     <string name="fall_detected_default">Fall Detected!\nPlease Confirm Status</string>
     <string name="acknowledge_button">ACKNOWLEDGE</string>
     <string name="sensor_status_ready">Sensors: Active</string>
+    <string name="facebook_app_id">your_facebook_app_id</string>
 </resources>

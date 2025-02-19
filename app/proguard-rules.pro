@@ -19,3 +19,11 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+-keepclassmembers class * {
+    @android.webkit.JavascriptInterface <methods>;
+}
+
+# Keep Facebook and Google Sign-In related classes
+-keep class com.facebook.** { *; }
+-keep class com.google.android.gms.** { *; }
