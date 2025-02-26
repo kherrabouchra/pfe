@@ -23,7 +23,7 @@ class AIViewModel : ViewModel() {
         _uiState.asStateFlow()
 
     private val generativeModel = GenerativeModel(
-        modelName = "gemini-1.5-flash",
+        modelName = "gemini-1.5-pro",
         apiKey = "AIzaSyCtKxNML--te6DJZ-CMwXZ5Dl6ry0Gwppo"
     )
 

@@ -18,6 +18,7 @@ sealed class Screen(val route: String) {
     object Dashboard : Screen("dashboard")
 
     object AIChat : Screen("AIChat")
+    object Settings : Screen("settings")
 }
 
 @Composable
@@ -31,8 +32,26 @@ fun AppNavigation(viewModel: MainViewModel) {
         composable(Screen.Splash.route) {
             SplashScreenContent(
                 onSplashComplete = {
-                    navController.navigate(Screen.Dashboard.route) {
+                    navController.navigate(Screen.Onboarding.route) {
                         popUpTo(Screen.Splash.route) { inclusive = true } // To prevent back navigation
+                    }
+                }
+            )
+        }
+
+        composable(Screen.Onboarding.route) {
+            OnboardingScreen(
+                onLoginClick = { navController.navigate(Screen.Login.route) },
+                onContinue = {
+                    // Define action for "Continue with Google" or "Facebook"
+                }
+            )
+        }
+        composable(Screen.Login.route) {
+            LoginScreen(
+                onLogin = {
+                    navController.navigate(Screen.Dashboard.route) {
+                        popUpTo(Screen.Login.route) { inclusive = true }
                     }
                 }
             )
@@ -40,7 +59,7 @@ fun AppNavigation(viewModel: MainViewModel) {
 
         composable(Screen.AIChat.route) {
             val aiViewModel: AIViewModel = viewModel()
-            AIChatScreen(aiViewModel)
+            AIChatScreen(aiViewModel, navController)
         }
         composable(Screen.Dashboard.route) {
             DashboardScreen(
@@ -52,6 +71,10 @@ fun AppNavigation(viewModel: MainViewModel) {
                 },
                 navController = navController
             )
+        }
+
+        composable(Screen.Settings.route) {
+            SettingsScreen(navController)
         }
     }
 }

@@ -3,10 +3,10 @@
 
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="primary">#FF0031E2</color>
-    <color name="secondary">#FF66A3FF</color>
+    <color name="primary">#2547CE</color>
+    <color name="secondary">#4265E7</color>
     <color name="gray">#DBDBDB</color>
-    <color name="blue">#FF0031E2</color>
+    <color name="blue">#2547CE</color>
     <color name="Transparent">#0028A745</color>
 
     <color name="statusNormal">#FF28A745</color>

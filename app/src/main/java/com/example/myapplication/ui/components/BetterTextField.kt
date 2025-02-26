@@ -9,6 +9,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.tooling.preview.Preview
 
 @Composable
 fun BetterTextField(
@@ -26,4 +29,4 @@ fun BetterTextField(
             .padding(horizontal = 24.dp),
         shape = RoundedCornerShape(12.dp)
     )
-} 
+}

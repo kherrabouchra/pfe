@@ -1,6 +1,8 @@
 package com.example.myapplication.ui.components
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -14,6 +16,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.tooling.preview.Preview
 
 @Composable
 fun BetterButton(
@@ -41,6 +44,23 @@ fun BetterButton(
             text = text,
             fontSize = 16.sp,
             fontWeight = FontWeight.Medium
+        )
+    }
+}
+
+@Preview
+@Composable
+fun BetterButtonPreview() {
+    Column {
+        BetterButton(
+            text = "Primary Button",
+            onClick = {}
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        BetterButton(
+            text = "Transparent Button",
+            onClick = {},
+            isTransparent = true
         )
     }
 } 

@@ -6,6 +6,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement.Center
 import androidx.compose.foundation.layout.Arrangement.SpaceBetween
 import androidx.compose.foundation.layout.Arrangement.spacedBy
 import androidx.compose.foundation.layout.fillMaxSize
@@ -46,12 +47,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Chat
+import androidx.compose.material.icons.filled.Phone
 import com.example.myapplication.R
 import com.example.myapplication.ui.components.HealthMetricCard
 import com.example.myapplication.ui.components.StepsCard
 import com.example.myapplication.viewmodel.MainViewModel
 import androidx.compose.material3.FabPosition
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import com.example.chat.AIChatScreen
 import com.example.myapplication.ui.components.RecommendationCard
@@ -60,6 +64,7 @@ import androidx.navigation.NavController
 import androidx.navigation.Navigator
 import com.example.myapplication.navigation.Screen
 import androidx.navigation.compose.rememberNavController
+import org.intellij.lang.annotations.JdkConstants.HorizontalAlignment
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -76,76 +81,75 @@ fun DashboardScreen(
     Box(modifier = Modifier.fillMaxSize()) {
         Scaffold(
             modifier = Modifier.fillMaxSize(),
-            topBar = {
-                TopAppBar(
-                    title = {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 20.dp),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                Image(
-                                    painter = painterResource(id = R.drawable.moon),
-                                    contentDescription = "Evening",
-                                    modifier = Modifier.size(64.dp)
-                                )
-                                Column(modifier = Modifier.padding(start = 8.dp)) {
-                                    Text(
-                                        text = "Good Evening,",
-                                        style = MaterialTheme.typography.titleLarge,
-                                        fontWeight = FontWeight.SemiBold)
-                                    Text(
-                                        text = "Jinnie",
-                                        style = MaterialTheme.typography.bodyMedium,
-                                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
 
-                                    )
-                                }
-                            }
-                            IconButton(onClick = { /* TODO: Handle notifications */ }) {
-                                Icon(
-                                    painter = painterResource(id = R.drawable.ic_notif),
-                                    contentDescription = "Notifications"
-                                    ,modifier = Modifier.size(24.dp)
-                                )
-                            }
-                        }
-                    },
-                    colors = TopAppBarDefaults.topAppBarColors(
-                        containerColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.07f)
-                    )
-                )
-            },
             floatingActionButton = {
-                // floatingActionButton = {
-                //     FloatingActionButton(
-                //         onClick = { showChat = true },
-                //         // ...
-                //     ) {
-                //         Icon(
-                //             imageVector = Icons.Default.Chat,
-                //             contentDescription = "Chat with AI"
-                //         )
-                //     }
-                // },
+
+                FloatingActionButton(
+                 onClick = { showChat = true },
+
+       ) {
+             Icon(
+                      imageVector = Icons.Default.Phone,
+                  contentDescription = "Emergency call"
+                  )
+              }
+
             },
             floatingActionButtonPosition = FabPosition.End
         ) { padding ->
+
             Column(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(padding)
-                    .padding(horizontal = 16.dp)
+
                     .verticalScroll(rememberScrollState()) // Added scroll here
             ) {
-                // Mood Section
+               TopAppBar(
+                        title = {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth(),
+                                 horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Image(
+                                        painter = painterResource(id = R.drawable.better_logo),
+                                        contentDescription = "logo",
+                                        modifier = Modifier.size(70.dp),
+                                        alignment = Alignment.CenterStart
+                                    )
+
+                                }
+                                IconButton(
+                                    onClick = { /* TODO: Handle notifications */ }) {
+                                    Icon(
+                                        painter = painterResource(id = R.drawable.ic_notif),
+                                        contentDescription = "Notifications"
+                                        ,modifier = Modifier.size(28.dp)
+                                    )
+                                }
+                            }
+                        },
+                        colors = TopAppBarDefaults.topAppBarColors(
+                            containerColor = MaterialTheme.colorScheme.background
+                        )
+                    )
+                Column (modifier = Modifier.padding(16.dp)){
+
+                    Image(
+                        modifier = Modifier.width(250.dp),
+                        painter = painterResource(id =R.drawable.undraw_quiet_street_v45k),
+                        contentDescription = "Quiet street",
+                        alignment = Alignment.Center
+                    )
+
                 Text(
                     text = "How are you feeling today?",
                     style = MaterialTheme.typography.titleLarge,
-                    modifier = Modifier.padding(vertical = 16.dp)
+                    modifier = Modifier.padding(vertical = 16.dp),
+                    fontWeight = FontWeight.Bold,
                 )
 
                 // Mood Selection with Slider
@@ -154,21 +158,7 @@ fun DashboardScreen(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.cil_sad),
-                            contentDescription = "Awful",
-                            modifier = Modifier.size(24.dp)
-                        )
-                        Icon(
-                            painter = painterResource(id = R.drawable.cil_net),
-                            contentDescription = "Neutral",
-                            modifier = Modifier.size(24.dp)
-                        )
-                        Icon(
-                            painter = painterResource(id = R.drawable.cil_good),
-                            contentDescription = "Good",
-                            modifier = Modifier.size(24.dp)
-                        )
+
                     }
 
                     Slider(
@@ -179,6 +169,18 @@ fun DashboardScreen(
                         onValueChangeFinished = {
                             moodValue = moodValue.roundToInt().toFloat() // Round to nearest integer
                         },
+
+
+
+
+
+
+
+
+
+
+
+
                         colors = SliderDefaults.colors(
                             thumbColor = MaterialTheme.colorScheme.primary,
                             activeTrackColor = MaterialTheme.colorScheme.primary,
@@ -222,7 +224,8 @@ fun DashboardScreen(
                 ) {
                     Text(
                         text = "Health Summary",
-                        style = MaterialTheme.typography.titleMedium
+                        style = MaterialTheme.typography.titleMedium,
+
                     )
                     Text(
                         text = "Edit",
@@ -237,6 +240,7 @@ fun DashboardScreen(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
+
                     HealthMetricCard(
                         title = "Heart rate",
                         value = "69",
@@ -257,7 +261,7 @@ fun DashboardScreen(
 
                 // Steps Card
                 StepsCard(
-                    steps = 1601,
+                    steps = 2601,
                     goal = 5000,
                     modifier = Modifier
                         .fillMaxWidth()
@@ -333,7 +337,7 @@ fun DashboardScreen(
                     subtitle = "You've missed recording vitals for 2 days."
                 )
             }
-        }
+        } }
 
         // Updated Bottom Navigation
         NavigationBar(
@@ -345,9 +349,7 @@ fun DashboardScreen(
         ) {
             val items = listOf(
                 Triple("Home", R.drawable.home, "home"),
-                Triple("Vitals", R.drawable.vitals, "vitals"),
-                Triple("Meds", R.drawable.meds, "meds"),
-                Triple("AI Assistant", R.drawable.nutrition, "AIChat"),
+                Triple("AI Assistant", android.R.drawable.stat_notify_chat, "AIChat"),
                 Triple("Settings", R.drawable.settings, "settings")
             )
 
@@ -357,6 +359,10 @@ fun DashboardScreen(
                     onClick = {
                         if (route == "AIChat") {
                             navController.navigate(Screen.AIChat.route) {
+                                popUpTo(Screen.Dashboard.route) { inclusive = true }
+                            }
+                        } else if (route == "settings") {
+                            navController.navigate(Screen.Settings.route) {
                                 popUpTo(Screen.Dashboard.route) { inclusive = true }
                             }
                         } else {
@@ -381,8 +387,7 @@ fun DashboardScreen(
                         unselectedIconColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
                         selectedTextColor = MaterialTheme.colorScheme.primary,
                         unselectedTextColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
-                        indicatorColor = Color.Unspecified
-
+                        indicatorColor = Color.White
                     ),
                     modifier = Modifier.background(
                         if (currentRoute == route)
@@ -395,7 +400,7 @@ fun DashboardScreen(
     }
 
     if (showChat) {
-        AIChatScreen()
+        AIChatScreen(navController = navController)
     }
 }
 

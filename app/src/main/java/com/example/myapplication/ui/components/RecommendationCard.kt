@@ -11,6 +11,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.myapplication.R
+import androidx.compose.ui.tooling.preview.Preview
 
 @Composable
 fun RecommendationCard(
@@ -51,4 +52,13 @@ fun RecommendationCard(
             }
         }
     }
+}
+
+@Preview
+@Composable
+fun RecommendationCardPreview() {
+    RecommendationCard(
+        title = "Daily Exercise",
+        subtitle = "30 minutes of moderate activity"
+    )
 } 

@@ -10,6 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.myapplication.viewmodel.FallDetectionViewModel
+import androidx.compose.ui.tooling.preview.Preview
 
 @Composable
 fun FallDetectionScreen(
@@ -43,4 +44,13 @@ fun FallDetectionScreen(
             }
         }
     }
+}
+
+@Preview(showSystemUi = true)
+@Composable
+fun FallDetectionScreenPreview() {
+    FallDetectionScreen(
+        viewModel = FallDetectionViewModel(),
+        onResetDetection = {}
+    )
 } 

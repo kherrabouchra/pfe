@@ -25,6 +25,7 @@ import com.example.myapplication.ui.components.BetterButton
 import com.example.myapplication.ui.components.BetterTextField
 import androidx.navigation.NavController
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -92,4 +93,12 @@ fun LoginScreen(onLogin: () -> Unit) {
             modifier = Modifier.clickable { /* Handle trouble logging in */ }
         )
     }
+}
+
+@Preview(showSystemUi = true)
+@Composable
+fun LoginScreenPreview() {
+    LoginScreen(
+        onLogin = {}
+    )
 } 

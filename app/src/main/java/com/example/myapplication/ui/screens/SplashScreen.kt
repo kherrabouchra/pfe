@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.myapplication.R
 import kotlinx.coroutines.delay
@@ -44,8 +45,16 @@ fun SplashScreenContent(onSplashComplete: () -> Unit) {
             painter = painterResource(id = R.drawable.logochar),
             contentDescription = "Logo",
             modifier = Modifier
-                .width(200.dp)
+                .width(100.dp)
                 .alpha(alphaAnim.value)
         )
     }
+}
+
+@Preview(showSystemUi = true)
+@Composable
+fun SplashScreenPreview() {
+    SplashScreenContent(
+        onSplashComplete = {}
+    )
 }

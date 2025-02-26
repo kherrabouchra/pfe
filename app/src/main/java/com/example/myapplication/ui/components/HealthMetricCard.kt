@@ -15,6 +15,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.ui.draw.shadow
 import com.example.myapplication.R
+import androidx.compose.ui.tooling.preview.Preview
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -27,7 +28,10 @@ fun HealthMetricCard(
     modifier: Modifier = Modifier
 ) {
     Card(
-        modifier = modifier.shadow(5.dp).clickable {   },
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = 6.dp
+        ),
+        modifier = modifier.clickable {   },
         colors = CardDefaults.cardColors(
             containerColor = Color.White
         ),
@@ -43,7 +47,8 @@ fun HealthMetricCard(
                 Text(
                     text = title,
                     style = MaterialTheme.typography.headlineMedium,
-                   fontWeight = FontWeight.Bold
+                   fontWeight = FontWeight.Bold,
+
                 )
                 Text(
                     text = subtitle,
@@ -75,4 +80,16 @@ fun HealthMetricCard(
             )
         }
     }
+}
+
+@Preview
+@Composable
+fun HealthMetricCardPreview() {
+    HealthMetricCard(
+        title = "Heart Rate",
+        value = "72",
+        unit = "BPM",
+        subtitle = "Latest",
+        icon = R.drawable.ic_ecg
+    )
 } 
