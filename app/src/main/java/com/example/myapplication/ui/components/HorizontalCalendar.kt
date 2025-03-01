@@ -53,6 +53,43 @@ fun HorizontalCalendar(
     }
 
     Column(modifier = modifier) {
+        // Updated navigation row
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            IconButton(
+                onClick = { firstVisibleWeekOffset-- },
+                modifier = Modifier.weight(1f)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.KeyboardArrowLeft,
+                    contentDescription = "Previous week"
+                )
+            }
+
+            Text(
+                text = displayDate,
+                style = MaterialTheme.typography.bodyLarge.copy(
+                    fontWeight = FontWeight.Medium
+                ),
+                modifier = Modifier.weight(2f),
+                textAlign = TextAlign.Center
+            )
+
+            IconButton(
+                onClick = { firstVisibleWeekOffset++ },
+                modifier = Modifier.weight(1f)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.KeyboardArrowRight,
+                    contentDescription = "Next week"
+                )
+            }
+        }
         LazyRow(
             state = lazyListState,
             horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -72,43 +109,7 @@ fun HorizontalCalendar(
             flingBehavior = rememberSnapFlingBehavior(lazyListState = lazyListState)
         )
 
-        // Updated navigation row
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            IconButton(
-                onClick = { firstVisibleWeekOffset-- },
-                modifier = Modifier.weight(1f)
-            ) {
-                Icon(
-                    imageVector = Icons.Default.KeyboardArrowLeft,
-                    contentDescription = "Previous week"
-                )
-            }
-            
-            Text(
-                text = displayDate,
-                style = MaterialTheme.typography.bodyLarge.copy(
-                    fontWeight = FontWeight.Medium
-                ),
-                modifier = Modifier.weight(2f),
-                textAlign = TextAlign.Center
-            )
-            
-            IconButton(
-                onClick = { firstVisibleWeekOffset++ },
-                modifier = Modifier.weight(1f)
-            ) {
-                Icon(
-                    imageVector = Icons.Default.KeyboardArrowRight,
-                    contentDescription = "Next week"
-                )
-            }
-        }
+
     }
 }
 

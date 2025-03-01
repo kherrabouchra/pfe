@@ -27,6 +27,7 @@ sealed class Screen(val route: String) {
     object Notifications : Screen("notifications")
     object Medication : Screen("medication")
     object Activities : Screen("activities")
+    object Reminder : Screen("reminder")
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -104,6 +105,9 @@ fun AppNavigation(viewModel: MainViewModel) {
         }
         composable(Screen.Medication.route) {
            MedicationScreen(navController)
+        }
+        composable(Screen.Reminder.route) {
+            ReminderScreen(navController)
         }
         composable(Screen.Fall.route) {
             val FallDetectionViewModel: FallDetectionViewModel = viewModel()

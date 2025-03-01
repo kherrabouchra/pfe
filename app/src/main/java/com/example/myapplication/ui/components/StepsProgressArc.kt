@@ -65,7 +65,7 @@ fun StepsProgressArc(
             )
 
             // Draw tick marks
-            val tickCount = 20
+            val tickCount = 30
             val tickLength = 12.dp.toPx()
             val radius = (size.width / 2f)
             val centerX = size.width / 2f

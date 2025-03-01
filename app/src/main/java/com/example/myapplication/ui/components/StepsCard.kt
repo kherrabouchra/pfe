@@ -12,6 +12,8 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.unit.dp
@@ -33,51 +35,60 @@ fun StepsCard(
             defaultElevation = 4.dp
         ),
     ) {
-        Column(
+        Row  (
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(18.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+                .padding(16.dp),
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-            ) {
+            Row (
+                modifier = Modifier.weight(0.3f)
+                , horizontalArrangement = Arrangement.SpaceAround,
+                verticalAlignment = Alignment.CenterVertically
+            ) { Icon(
+                painter = painterResource(id = R.drawable.ic_steps),
+                contentDescription = null,
+                modifier = Modifier.size(26.dp)
+            )
                 Text(
                     text = "Steps",
-                    style = MaterialTheme.typography.bodyLarge
+                    style = MaterialTheme.typography.headlineSmall,
+                    fontWeight = FontWeight.Bold
                 )
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_steps),
-                    contentDescription = null,
-                    modifier = Modifier.size(24.dp)
-                )
+
+
+
             }
+             Column(
+                 modifier= Modifier.padding(top = 42.dp).weight(0.7f)
+             ){
+                 StepsProgressArc(
+                     progress = steps.toFloat() / goal.toFloat(),
+                     modifier = Modifier
+                         .height(45.dp).padding(horizontal = 26.dp) ,
+                 )
+                 Row(
+                     modifier = Modifier.fillMaxWidth()  ,
+                     verticalAlignment = Alignment.Bottom,
+                     horizontalArrangement = Arrangement.Center
+                 ) {
+                     Text(
+                         text = steps.toString(),
+                         style = MaterialTheme.typography.displaySmall,
+                         fontWeight = FontWeight.Black
+                     )
+                     Text(
+                         text = "/$goal",
+                         style = MaterialTheme.typography.bodyLarge,
+                         color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
+                         modifier = Modifier.padding( bottom = 6.dp, start = 4.dp)
+                     )
+                 }
 
-            StepsProgressArc(
-                progress = steps.toFloat() / goal.toFloat(),
-                modifier = Modifier
-                    .height(100.dp).padding(60.dp),
-            )
+             }
 
 
-            Row(
-                modifier = Modifier  ,
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.Bottom
-            ) {
-                Text(
-                    text = steps.toString(),
-                    style = MaterialTheme.typography.displaySmall,
-                    fontWeight = FontWeight.Black
-                )
-                Text(
-                    text = "/$goal",
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
-                    modifier = Modifier.padding(bottom = 4.dp, start = 4.dp)
-                )
-            }
+
 
 
         }

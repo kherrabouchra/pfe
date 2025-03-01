@@ -91,7 +91,7 @@ fun MedicationScreen(navController: NavController) {
             modifier = Modifier.padding(horizontal = 20.dp),
             textAlign = TextAlign.Center
         )
-                    HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp).width(270.dp))
+                    HorizontalDivider(modifier = Modifier.padding(vertical = 16.dp).width(270.dp))
                     HorizontalCalendar {}
                 }
                 Column(modifier = Modifier.padding(vertical = 16.dp)) {
@@ -110,7 +110,7 @@ fun MedicationScreen(navController: NavController) {
                         )
                     }
                     repeat(4) {
-                        MedicationCard(title = "Aspirin", subtitle = "Take with food", time = "18:13")
+                        MedicationCard(title = "Aspirin", subtitle = "Take with food", time = "18:13", id=1, navController)
                     }
                 }
             }

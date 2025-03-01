@@ -1,6 +1,7 @@
 package com.example.myapplication.ui.components
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.materialIcon
 import androidx.compose.material3.*
@@ -14,15 +15,24 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.myapplication.R
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
+import com.example.myapplication.navigation.Screen
 
 @Composable
 fun MedicationCard(
     title: String,
     subtitle: String,
-    time: String
+    time: String,
+    id: Int,
+    navController: NavController
 ) {
     Card(
-        modifier = Modifier.fillMaxWidth().padding(16.dp).height(90.dp),
+        modifier = Modifier.fillMaxWidth().padding(16.dp).height(90.dp).clickable( onClick = {
+            navController.navigate(Screen.Reminder.route) {
+                popUpTo(Screen.Dashboard.route) { inclusive = true }
+            }
+        }),
 
         colors = CardDefaults.cardColors(
             containerColor = Color.White
@@ -83,9 +93,12 @@ fun MedicationCard(
 @Preview
 @Composable
 fun MedicationCardPreview() {
+    val navController = rememberNavController()
     MedicationCard(
         title = "Daily Exercise",
         subtitle = "30 minutes of moderate activity",
-        time = "18:13"
+        time = "18:13",
+        id= 1,
+        navController= navController
     )
 }

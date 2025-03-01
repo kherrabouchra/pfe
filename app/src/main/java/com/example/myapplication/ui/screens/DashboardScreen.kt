@@ -52,6 +52,8 @@ import androidx.compose.material.icons.filled.Emergency
 import androidx.compose.material.icons.filled.Face
 import androidx.compose.material.icons.filled.Mood
 import androidx.compose.material.icons.filled.SentimentDissatisfied
+import androidx.compose.material3.Badge
+import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialTheme
@@ -117,7 +119,7 @@ fun DashboardScreen(
                 Row(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(horizontal = 16.dp )
+                                .padding(horizontal = 18.dp )
                                 .height(38.dp),
                             horizontalArrangement = SpaceBetween,
                             verticalAlignment = Alignment.CenterVertically
@@ -128,6 +130,10 @@ fun DashboardScreen(
                                 modifier = Modifier.size(130.dp),
                                 alignment = Alignment.CenterStart
                             )
+                    Box(
+                        contentAlignment = Alignment.TopEnd
+                    ) {
+
                             IconButton(
                                 onClick = {
                                     navController.navigate(Screen.Notifications.route) {
@@ -138,10 +144,22 @@ fun DashboardScreen(
                                 Icon(
                                     painter = painterResource(id = R.drawable.ic_notif),
                                     contentDescription = "Notifications",
-                                    modifier = Modifier.size(30.dp)
+                                    modifier = Modifier.size(32.dp),
+                                    tint = MaterialTheme.colorScheme.onSurface
                                 )
                             }
+
+
+                        Badge(
+                            containerColor = Color.Red,
+                            contentColor = Color.White,
+                            modifier = Modifier.offset(x = (-6).dp, y = (6).dp)
+                        ) {
+                            Text("4")
                         }
+                    }
+
+                }
 
                 Column(modifier = Modifier.padding(16.dp)) {
                     Text(
@@ -226,7 +244,7 @@ fun DashboardScreen(
                     }
                     Divider(
                         modifier = Modifier
-                            .padding(top = 24.dp, bottom = 24.dp)
+                            .padding(top = 24.dp, bottom = 18.dp)
                             .fillMaxWidth()
                     )
                     // Health Summary Section
@@ -370,7 +388,7 @@ fun DashboardScreen(
                     }
                     HorizontalDivider(
                         modifier = Modifier
-                            .padding(top = 28.dp, bottom = 24.dp)
+                            .padding(top = 28.dp, bottom = 10.dp)
                             .fillMaxWidth()
                     )
                     // Activity Log with checkable items and strike-through
@@ -381,15 +399,35 @@ fun DashboardScreen(
                         horizontalArrangement = SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text(
-                            text = "Activity Log",
-                            style = MaterialTheme.typography.titleMedium,
-                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
-                        )
+
+                        Row (verticalAlignment = Alignment.CenterVertically){
+                            Text(
+                                text = "Activity Log",
+                                style = MaterialTheme.typography.titleMedium,
+                                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                            )
+
+                            Box(
+                                modifier = Modifier.padding(horizontal=6.dp)
+                                    .size(18.dp)
+                                    .background(MaterialTheme.colorScheme.primary, 
+                                        shape = CircleShape),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    text = checkedStates.size.toString(),
+                                    color = Color.White,
+                                    style = MaterialTheme.typography.bodySmall,
+
+                                )
+                            }
+                        }
+
                         TextButton(
                             onClick = { navController.navigate("activities") },
                             colors = ButtonDefaults.buttonColors(
-                                contentColor = MaterialTheme.colorScheme.primary
+                                contentColor = MaterialTheme.colorScheme.primary,
+                                containerColor = Color.Transparent
                             )
                         ) {
                             Text("View All")
@@ -438,6 +476,10 @@ fun DashboardScreen(
                         modifier = Modifier.padding(start = 8.dp)
                     )
                     Spacer(modifier = Modifier.height(12.dp))
+                    Column {
+
+
+                    }
                     RecommendationCard(
                         title = "Try a 5-min walk to boost mood!",
                         subtitle = "Your last three mood logs were neutral."
