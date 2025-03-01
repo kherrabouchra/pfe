@@ -29,7 +29,7 @@ fun HealthMetricCard(
 ) {
     Card(
         elevation = CardDefaults.cardElevation(
-            defaultElevation = 6.dp
+            defaultElevation = 4.dp
         ),
         modifier = modifier.clickable {   },
         colors = CardDefaults.cardColors(
@@ -46,7 +46,7 @@ fun HealthMetricCard(
             Column {
                 Text(
                     text = title,
-                    style = MaterialTheme.typography.headlineMedium,
+                    style = MaterialTheme.typography.headlineSmall,
                    fontWeight = FontWeight.Bold,
 
                 )

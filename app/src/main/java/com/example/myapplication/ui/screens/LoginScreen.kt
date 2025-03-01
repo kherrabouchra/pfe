@@ -43,28 +43,36 @@ fun LoginScreen(onLogin: () -> Unit) {
     ) {
         Text(
             text = "Login",
-            fontSize = 24.sp,
-            fontWeight = FontWeight.Bold,
+            fontSize = 32.sp,
+            fontWeight = FontWeight.Black,
             color = Color.Black,
-            modifier = Modifier.padding(bottom = 24.dp)
+            modifier = Modifier.padding(bottom = 24.dp).align(Alignment.Start)
         )
         
-        OutlinedTextField(
+       TextField(
             value = email,
+           colors = TextFieldDefaults.colors(
+               unfocusedContainerColor = Color.Transparent,
+               focusedContainerColor = Color.Transparent,
+           ),
             onValueChange = { email = it },
             label = { Text("Email") },
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = 16.dp),
+                .padding(bottom = 20.dp),
             singleLine = true,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
         )
         
-        OutlinedTextField(
+        TextField(
             value = password,
+            colors = TextFieldDefaults.colors(
+                unfocusedContainerColor = Color.Transparent,
+                focusedContainerColor = Color.Transparent,
+            ),
             onValueChange = { password = it },
             label = { Text("Password") },
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
             singleLine = true,
             visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
@@ -81,9 +89,11 @@ fun LoginScreen(onLogin: () -> Unit) {
         Spacer(modifier = Modifier.height(16.dp))
         Button(
             onClick = onLogin,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth().height(50.dp)
         ) {
-            Text(text = "Login")
+            Text(text = "Login"
+
+            )
         }
         Spacer(modifier = Modifier.height(16.dp))
         Text(

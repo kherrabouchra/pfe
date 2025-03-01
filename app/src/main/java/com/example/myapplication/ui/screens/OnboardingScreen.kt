@@ -17,113 +17,26 @@ import com.example.myapplication.R
 import androidx.compose.ui.tooling.preview.Preview
 
 @Composable
-fun OnboardingScreen(onContinue: () -> Unit, onLoginClick: () -> Unit) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(26.dp),
-        horizontalAlignment = Alignment.Start,
-        verticalArrangement = Arrangement.Top
-    ) {
-        Column {
-            Image(
-                painter = painterResource(id = R.drawable.better_logo),
-                contentDescription = null,
-                modifier = Modifier.size(140.dp)
-            )
-
-            Text(
-                text = "Your wellness all",
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color.Black,
-            )
-            Text(
-                text = "in one place!",
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color.Black,
-            )
-        }
-
-        Spacer(modifier = Modifier.height(120.dp))
-
-        OutlinedButton(
-            onClick = onContinue,
-            modifier = Modifier.fillMaxWidth().height(50.dp),
-            colors = ButtonDefaults.outlinedButtonColors(contentColor = Color.Black) // Ensure content color is black
-
-        ) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Image(
-                    painter = painterResource(id = R.drawable.google),
-                    contentDescription = "Google",
-                    modifier = Modifier.size(24.dp)
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(text = "Continue with Google")
-            }
-        }
-
-        Spacer(modifier = Modifier.height(12.dp))
-
-        OutlinedButton(
-            onClick = onContinue,
-            modifier = Modifier.fillMaxWidth().height(50.dp),
-            colors = ButtonDefaults.outlinedButtonColors(contentColor = Color.Black) // Ensure content color is black
-
-        ) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Image(
-                    painter = painterResource(id = R.drawable.facebook),
-                    contentDescription = "Facebook",
-                    modifier = Modifier.size(24.dp)
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(text = "Continue with Facebook")
-            }
-        }
-
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceEvenly,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Divider(
-                modifier = Modifier
-                    .padding(vertical = 8.dp)
-                    .width(110.dp)
-            )
-            Text(
-                text = "or",
-                modifier = Modifier.padding(vertical = 12.dp),
-                color = Color.Gray
-            )
-            Divider(
-                modifier = Modifier
-                    .padding(vertical = 8.dp)
-                    .width(110.dp)
-            )
-        }
+fun OnboardingScreen(
+    onComplete: () -> Unit
+) {
+    Column {
 
 
-        Row(
-            modifier = Modifier.align(Alignment.CenterHorizontally),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = "Already have an account?",
-                color = Color.Black,
-            )
-            TextButton(
-                onClick = onLoginClick, // Fix: Navigate to login
-            ) {
-                Text(
-                    text = "Login",
-                    color = Color.Blue
-                )
-            }
-        }
+
+        Image(
+            modifier = Modifier.width(250.dp),
+            painter = painterResource(id =R.drawable.house_bookshelves_rafiki),
+            contentDescription = "Quiet street",
+            alignment = Alignment.Center
+        )
+
+        LinearProgressIndicator(
+            progress = { 0.5f },
+            modifier = Modifier.width(50.dp).height(10.dp),
+
+
+        )
     }
 }
 
@@ -131,7 +44,6 @@ fun OnboardingScreen(onContinue: () -> Unit, onLoginClick: () -> Unit) {
 @Composable
 fun OnboardingScreenPreview() {
     OnboardingScreen(
-        onContinue = {},
-        onLoginClick = {}
+        onComplete = {}
     )
 }

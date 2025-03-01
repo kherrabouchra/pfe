@@ -41,13 +41,21 @@ fun SplashScreenContent(onSplashComplete: () -> Unit) {
             .background(Color.White),
         contentAlignment = Alignment.Center
     ) {
-        Image(
-            painter = painterResource(id = R.drawable.logochar),
-            contentDescription = "Logo",
-            modifier = Modifier
-                .width(100.dp)
-                .alpha(alphaAnim.value)
-        )
+        Row (verticalAlignment = Alignment.Bottom){
+
+            Image(
+                painter = painterResource(id = R.drawable.logochar),
+                contentDescription = "Logo",
+                modifier = Modifier
+                    .width(80.dp).alpha(alphaAnim.value)
+            )
+            Image(
+                painter = painterResource(id = R.drawable.etter),
+                contentDescription = "Logo",
+                modifier = Modifier
+                    .width(130.dp).alpha(alphaAnim.value)
+            )
+        }
     }
 }
 

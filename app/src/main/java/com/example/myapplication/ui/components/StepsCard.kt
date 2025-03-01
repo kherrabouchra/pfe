@@ -13,6 +13,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.unit.dp
 import com.example.myapplication.R
 import androidx.compose.ui.tooling.preview.Preview
@@ -29,7 +30,7 @@ fun StepsCard(
         colors = CardDefaults.cardColors(
             containerColor = Color.White
         ), elevation = CardDefaults.cardElevation(
-            defaultElevation = 6.dp
+            defaultElevation = 4.dp
         ),
     ) {
         Column(
@@ -41,7 +42,6 @@ fun StepsCard(
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
                     text = "Steps",
@@ -57,12 +57,12 @@ fun StepsCard(
             StepsProgressArc(
                 progress = steps.toFloat() / goal.toFloat(),
                 modifier = Modifier
-                    .size(200.dp),
+                    .height(100.dp).padding(60.dp),
             )
 
 
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier  ,
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.Bottom
             ) {

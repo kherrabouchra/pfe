@@ -24,7 +24,7 @@ fun RecommendationCard(
             containerColor = Color.White
         ),
         elevation = CardDefaults.cardElevation(
-            defaultElevation = 1.dp
+            defaultElevation = 3.dp
         )
     ) {
         Row(
@@ -42,8 +42,9 @@ fun RecommendationCard(
                 Text(
                     text = title,
                     fontSize = 14.sp,
-                    fontWeight = FontWeight.Medium
+                    fontWeight = FontWeight.Bold
                 )
+
                 Text(
                     text = subtitle,
                     fontSize = 12.sp,

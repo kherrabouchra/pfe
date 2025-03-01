@@ -1,6 +1,6 @@
 <resources>
     <!-- Existing strings -->
-    <string name="app_name">BetterApp</string> <!-- Updated app name -->
+    <string name="app_name">Better</string> <!-- Updated app name -->
     <string name="baking_title">Health assistant</string>
     <string name="prompt_placeholder">How can I help you?</string>
     <string name="results_placeholder">AI responses will appear here...</string>
