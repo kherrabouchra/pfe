@@ -31,8 +31,8 @@ fun BottomNavigationBar(
             if (getSelectedIndex(currentRoute) < tabPositions.size) {
                 TabRowDefaults.SecondaryIndicator(
                     modifier = Modifier.tabIndicatorOffset(tabPositions[getSelectedIndex(currentRoute)])
-                        .offset(y = (-68).dp),
-                    height = 6.dp,
+                        .offset(y = (-70).dp),
+                    height = 4.dp,
                     color = MaterialTheme.colorScheme.primary
                 )
             }
@@ -42,7 +42,7 @@ fun BottomNavigationBar(
         val items = listOf(
             Triple("Home", R.drawable.ic_home, "home"),
             Triple("Activities", R.drawable.ic_activities, "activities"),
-            Triple("AI Assistant",  R.drawable.ic_chat, "AIChat"),
+            Triple("AI Chat",  R.drawable.ic_chat, "AIChat"),
             Triple("Settings", R.drawable.ic_settings, "settings")
         )
 

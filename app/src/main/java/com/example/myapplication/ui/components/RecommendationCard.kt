@@ -24,7 +24,7 @@ fun RecommendationCard(
         colors = CardDefaults.cardColors(
             containerColor = Color.White
         ),
-        border = BorderStroke(1.dp, Color.Gray)
+        border = BorderStroke(2.dp, Color.LightGray)
     )
 
     {

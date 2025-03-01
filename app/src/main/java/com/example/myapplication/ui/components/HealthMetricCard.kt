@@ -44,12 +44,22 @@ fun HealthMetricCard(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Column {
+
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(
+                    painter = painterResource(id = icon),
+                    contentDescription = null,
+                    modifier = Modifier.size(28.dp).align(Alignment.Top).padding(top=6.dp, end = 2.dp),
+
+                    )
                 Text(
                     text = title,
                     style = MaterialTheme.typography.headlineSmall,
-                   fontWeight = FontWeight.Bold,
+                    fontWeight = FontWeight.Bold,
 
-                )
+                    )
+            }
+
                 Text(
                     text = subtitle,
                     style = MaterialTheme.typography.bodyLarge,
@@ -72,12 +82,7 @@ fun HealthMetricCard(
                     )
                 }
             }
-            Icon(
-                painter = painterResource(id = icon),
-                contentDescription = null,
-                modifier = Modifier.size(28.dp).align(Alignment.Top).padding(top=6.dp, end = 2.dp),
 
-            )
         }
     }
 }

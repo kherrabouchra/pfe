@@ -87,7 +87,7 @@ fun AppNavigation(viewModel: MainViewModel) {
                 viewModel = viewModel,
                 onSignOut = {
                     navController.navigate(Screen.Login.route) {
-                        popUpTo(Screen.Dashboard.route) { inclusive = true }
+                        popUpTo(Screen.Dashboard.route) { inclusive = false }
                     }
                 },
                 navController = navController

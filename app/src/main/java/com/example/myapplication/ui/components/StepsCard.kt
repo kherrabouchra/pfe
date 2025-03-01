@@ -43,8 +43,8 @@ fun StepsCard(
         ) {
             Row (
                 modifier = Modifier.weight(0.3f)
-                , horizontalArrangement = Arrangement.SpaceAround,
-                verticalAlignment = Alignment.CenterVertically
+                , horizontalArrangement = Arrangement.Start,
+                verticalAlignment = Alignment.Bottom
             ) { Icon(
                 painter = painterResource(id = R.drawable.ic_steps),
                 contentDescription = null,
@@ -52,7 +52,7 @@ fun StepsCard(
             )
                 Text(
                     text = "Steps",
-                    style = MaterialTheme.typography.headlineSmall,
+                    style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold
                 )
 
@@ -65,7 +65,7 @@ fun StepsCard(
                  StepsProgressArc(
                      progress = steps.toFloat() / goal.toFloat(),
                      modifier = Modifier
-                         .height(45.dp).padding(horizontal = 26.dp) ,
+                         .height(45.dp).padding(horizontal = 16.dp) ,
                  )
                  Row(
                      modifier = Modifier.fillMaxWidth()  ,

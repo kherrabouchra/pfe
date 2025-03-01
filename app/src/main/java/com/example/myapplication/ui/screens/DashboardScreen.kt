@@ -197,9 +197,9 @@ fun DashboardScreen(
                                 )
 
                                 val icon = when (moodValue.roundToInt()) {
-                                    0 -> Icons.Filled.SentimentDissatisfied // Sad 😞
-                                    1 -> Icons.Filled.Face // Neutral 😐
-                                    2 -> Icons.Filled.Mood // Happy 😊
+                                    0 -> Icons.Filled.SentimentDissatisfied
+                                    1 -> Icons.Filled.Face
+                                    2 -> Icons.Filled.Mood
                                     else -> Icons.Filled.Face
                                 }
 
