@@ -21,7 +21,7 @@
       </SelectionState>
       <SelectionState runConfigName="BetterApp">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2025-02-27T09:54:20.582358Z">
+        <DropdownSelection timestamp="2025-03-11T16:33:32.152364Z">
           <Target type="DEFAULT_BOOT">
             <handle>
               <DeviceId pluginId="PhysicalDevice" identifier="serial=CB512BMH8F" />
@@ -29,6 +29,9 @@
           </Target>
         </DropdownSelection>
         <DialogSelection />
+      </SelectionState>
+      <SelectionState runConfigName="SplashScreenPreview">
+        <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>
   </component>

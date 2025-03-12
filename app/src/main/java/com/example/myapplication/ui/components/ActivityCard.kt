@@ -1,6 +1,7 @@
 package com.example.myapplication.ui.components
 
 import android.graphics.drawable.Icon
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -34,7 +35,7 @@ fun ActivityCard(
         modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 6.dp).clickable (onClick = { navController.navigate(
             navigate){
             popUpTo(Screen.Dashboard.route) { inclusive = true }
-        } } ),
+        } } ), border = BorderStroke(0.3.dp, Color.LightGray),
 
 
 

@@ -32,8 +32,8 @@ fun StepsCard(
         colors = CardDefaults.cardColors(
             containerColor = Color.White
         ), elevation = CardDefaults.cardElevation(
-            defaultElevation = 4.dp
-        ),
+            defaultElevation = 2.dp
+        ),  border = BorderStroke(0.3.dp, Color.LightGray)
     ) {
         Row  (
             modifier = Modifier
@@ -65,7 +65,7 @@ fun StepsCard(
                  StepsProgressArc(
                      progress = steps.toFloat() / goal.toFloat(),
                      modifier = Modifier
-                         .height(45.dp).padding(horizontal = 16.dp) ,
+                         .height(40.dp).padding(horizontal = 29.dp) ,
                  )
                  Row(
                      modifier = Modifier.fillMaxWidth()  ,

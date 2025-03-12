@@ -29,12 +29,12 @@ fun HealthMetricCard(
 ) {
     Card(
         elevation = CardDefaults.cardElevation(
-            defaultElevation = 4.dp
+            defaultElevation = 2.dp
         ),
         modifier = modifier.clickable {   },
         colors = CardDefaults.cardColors(
             containerColor = Color.White
-        ),
+        ),  border = BorderStroke(0.3.dp, Color.LightGray)
      ) {
         Row(
             modifier = Modifier

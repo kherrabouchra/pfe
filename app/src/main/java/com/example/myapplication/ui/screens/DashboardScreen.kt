@@ -81,7 +81,7 @@ fun DashboardScreen(
     navController: NavController
 ) {
     var currentRoute by remember { mutableStateOf("home") }
-    var moodValue by remember { mutableStateOf(0f) }
+    var moodValue by remember { mutableStateOf(1f) }
     var checkedStates by remember { mutableStateOf(listOf(true, false, false, true)) }
     var showChat by remember { mutableStateOf(false) }
 
@@ -160,21 +160,39 @@ fun DashboardScreen(
                     }
 
                 }
+                //HorizontalDivider(
+                  //  modifier = Modifier
+                   //     .padding(top = 12.dp, bottom = 16.dp)
+                   //     .fillMaxWidth()
+               // )
+                Column(modifier = Modifier.padding(14.dp)) {
 
-                Column(modifier = Modifier.padding(16.dp)) {
+
+
+                        Text(
+                            text = "Hello, Johnny" +"!",
+                            style = MaterialTheme.typography.titleLarge,
+                            modifier = Modifier.padding(  horizontal = 12.dp),
+                            color= Color.Gray,
+                            fontWeight = FontWeight.Medium
+
+                        )
+
+
+
                     Text(
                         text = "How are you feeling today?",
-                        style = MaterialTheme.typography.titleLarge,
-                        modifier = Modifier.padding(vertical = 16.dp),
+                        style = MaterialTheme.typography.headlineSmall,
+                        modifier = Modifier.padding(  horizontal = 14.dp),
                         fontWeight = FontWeight.Bold
                     )
                     // Mood Selection with Slider
-                    Column(modifier = Modifier.fillMaxWidth()) {
+                    Column(modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)) {
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = SpaceBetween
                         ) {
-                            var moodValue by remember { mutableStateOf(0f) } // Start at 0
+                            var moodValue by remember { mutableStateOf(1f) } // Start at 0
 
                             Box(
                                 contentAlignment = Alignment.CenterStart,
@@ -242,11 +260,7 @@ fun DashboardScreen(
                             )
                         }
                     }
-                    Divider(
-                        modifier = Modifier
-                            .padding(top = 24.dp, bottom = 18.dp)
-                            .fillMaxWidth()
-                    )
+
                     // Health Summary Section
                     Row(
                         modifier = Modifier
@@ -326,24 +340,9 @@ fun DashboardScreen(
                         )
                     }
 
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 12.dp),
-                        horizontalArrangement = spacedBy(16.dp)
-                    ) {
-                        HealthMetricCard(
-                            title = "Water",
-                            value = "500",
-                            unit = "mL",
-                            subtitle = "Latest",
-                            icon = R.drawable.ic_heart,
-                            modifier = Modifier.weight(1f)
-                        )
 
-                    }
                     ElevatedCard(
-                        elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
+                        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(top = 24.dp)
@@ -534,7 +533,6 @@ private fun ActivityLogItem(
 @Preview
 @Composable
 fun DashboardScreenPreview() {
-    // Create a mock NavController for preview purposes
-    val navController = rememberNavController()
+     val navController = rememberNavController()
     DashboardScreen(viewModel = MainViewModel(), onSignOut = {}, navController = navController)
 }

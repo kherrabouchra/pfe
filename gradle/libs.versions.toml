@@ -16,6 +16,11 @@ material3 = "1.4.0-alpha08"
 cameraCore = "1.4.1"
 cameraLifecycle = "1.4.1"
 cameraView = "1.4.1"
+firebaseAuthCommon = "9.8.0"
+firebaseAuthKtx = "23.2.0"
+playServicesAuth = "21.3.0"
+coreKtx = "1.15.0"
+roomKtx = "2.6.1"
 
 [libraries]
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -34,6 +39,11 @@ material3 = { group = "androidx.compose.material3", name = "material3", version.
 camera-core = { group = "androidx.camera", name = "camera-core", version.ref = "cameraCore" }
 camera-lifecycle = { group = "androidx.camera", name = "camera-lifecycle", version.ref = "cameraLifecycle" }
 camera-view = { group = "androidx.camera", name = "camera-view", version.ref = "cameraView" }
+firebase-auth-common = { group = "com.google.firebase", name = "firebase-auth-common", version.ref = "firebaseAuthCommon" }
+firebase-auth-ktx = { group = "com.google.firebase", name = "firebase-auth-ktx", version.ref = "firebaseAuthKtx" }
+play-services-auth = { group = "com.google.android.gms", name = "play-services-auth", version.ref = "playServicesAuth" }
+core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "materialVersion" }
+room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "roomKtx" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

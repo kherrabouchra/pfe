@@ -31,6 +31,9 @@ import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.ui.text.font.FontWeight
 import java.time.DayOfWeek
 import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.tooling.preview.Preview
 import java.time.format.DateTimeFormatter
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -47,54 +50,42 @@ fun HorizontalCalendar(
     val lazyListState = rememberLazyListState()
     
     // Add formatter for the month and year
+    val dayMonthFormatter = remember { DateTimeFormatter.ofPattern("dd MMMM") }
+
     val monthYearFormatter = remember { DateTimeFormatter.ofPattern("MMMM yyyy") }
     val displayDate = remember(firstVisibleWeekOffset) {
         currentDate.plusDays(firstVisibleWeekOffset * 7).format(monthYearFormatter)
     }
+Column (modifier = Modifier.fillMaxWidth()) {
+    Spacer(modifier = Modifier.height(10.dp))
+    Row (verticalAlignment = Alignment.Bottom,
+        horizontalArrangement = Arrangement.SpaceBetween,
+        modifier = Modifier.fillMaxWidth()){
 
-    Column(modifier = modifier) {
-        // Updated navigation row
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            IconButton(
-                onClick = { firstVisibleWeekOffset-- },
-                modifier = Modifier.weight(1f)
-            ) {
-                Icon(
-                    imageVector = Icons.Default.KeyboardArrowLeft,
-                    contentDescription = "Previous week"
-                )
-            }
+        Text(
+            text= "Today,",
+            fontWeight = FontWeight.Black,
+            style = MaterialTheme.typography.displayMedium,
+            modifier = Modifier.padding(horizontal = 10.dp)
+        )
+        Text(
+            text= "${currentDate.format(dayMonthFormatter)}",
+            fontWeight = FontWeight.Black,
+            style = MaterialTheme.typography.displaySmall,
+            modifier = Modifier.padding(horizontal = 10.dp),
+            color = Color.Gray
+        )
+    }
 
-            Text(
-                text = displayDate,
-                style = MaterialTheme.typography.bodyLarge.copy(
-                    fontWeight = FontWeight.Medium
-                ),
-                modifier = Modifier.weight(2f),
-                textAlign = TextAlign.Center
-            )
 
-            IconButton(
-                onClick = { firstVisibleWeekOffset++ },
-                modifier = Modifier.weight(1f)
-            ) {
-                Icon(
-                    imageVector = Icons.Default.KeyboardArrowRight,
-                    contentDescription = "Next week"
-                )
-            }
-        }
+    Column(modifier = modifier.padding(vertical = 6.dp),
+        horizontalAlignment = Alignment.CenterHorizontally) {
+
         LazyRow(
             state = lazyListState,
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             content = {
-                items((-7..7).map { 
+                items((-7..7).map {
                     currentDate.plusDays(it.toLong() + (firstVisibleWeekOffset * 7))
                 }) { date ->
                     DateItem(
@@ -108,10 +99,55 @@ fun HorizontalCalendar(
             userScrollEnabled = true,
             flingBehavior = rememberSnapFlingBehavior(lazyListState = lazyListState)
         )
+        // Updated navigation row
+        Column(modifier = Modifier.padding(6.dp).clip(RoundedCornerShape(16.dp))){
+        Row(
+            modifier = Modifier
+                .background(Color.LightGray.copy(alpha = 0.5f)).fillMaxWidth(0.95f)
+                .padding(horizontal = 16.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+
+
+                IconButton(
+                    onClick = { firstVisibleWeekOffset-- },
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.KeyboardArrowLeft,
+                        contentDescription = "Previous week",
+                        modifier =  Modifier.requiredSize(30.dp)
+                    )
+                }
+
+                Text(
+                    text = displayDate,
+                    style = MaterialTheme.typography.bodyLarge.copy(
+                        fontWeight = FontWeight.Medium
+                    ),
+                    modifier = Modifier.weight(5f),
+                    textAlign = TextAlign.Center
+                )
+
+                IconButton(
+                    onClick = { firstVisibleWeekOffset++ },
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.KeyboardArrowRight,
+                        contentDescription = "Next week",
+                       modifier =  Modifier.requiredSize(30.dp)
+                    )
+                }
+            }
+
+        }
+
 
 
     }
-}
+}}
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -122,7 +158,7 @@ private fun DateItem(
 ) {
     Column(
         modifier = Modifier
-            .clip(RoundedCornerShape(28.dp))
+            .clip(RoundedCornerShape(38.dp))
             .border(
                 3.dp,
                 if (isSelected) MaterialTheme.colorScheme.primary
@@ -132,24 +168,27 @@ private fun DateItem(
                 else Color.Transparent
             )
             .clickable { onDateSelected(date) }
-            .padding(vertical = 8.dp, horizontal = 12.dp),
+            .padding(vertical = 8.dp, horizontal = 10.dp)
+            ,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+
+
         // Day of week (M, T, W, etc.) - now in English and uppercase
         Text(
             text = when (date.dayOfWeek) {
-                DayOfWeek.MONDAY -> "M"
-                DayOfWeek.TUESDAY -> "T"
-                DayOfWeek.WEDNESDAY -> "W"
-                DayOfWeek.THURSDAY -> "T"
-                DayOfWeek.FRIDAY -> "F"
-                DayOfWeek.SATURDAY -> "S"
-                DayOfWeek.SUNDAY -> "S"
+                DayOfWeek.MONDAY -> "Mon"
+                DayOfWeek.TUESDAY -> "Tue"
+                DayOfWeek.WEDNESDAY -> "Wed"
+                DayOfWeek.THURSDAY -> "Thu"
+                DayOfWeek.FRIDAY -> "Fri"
+                DayOfWeek.SATURDAY -> "Sat"
+                DayOfWeek.SUNDAY -> "Sun"
             },
             style = MaterialTheme.typography.bodyMedium.copy(
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Black
             ),
-            color = if (isSelected) Color.White else MaterialTheme.colorScheme.onSurface
+            color = if (isSelected) Color.White else Color.Gray
         )
         
         Spacer(modifier = Modifier.height(4.dp))
@@ -158,16 +197,18 @@ private fun DateItem(
         Text(
             text = date.dayOfMonth.toString(),
             style = MaterialTheme.typography.bodyLarge,
-            color = if (isSelected) Color.White else MaterialTheme.colorScheme.onSurface,
-            textAlign = TextAlign.Center
+            color = if (isSelected) Color.White else Color.Gray,
+            textAlign = TextAlign.Center,
+            fontWeight = FontWeight.Black
         )
     }
 }
 
-// Preview
+
 @RequiresApi(Build.VERSION_CODES.O)
+@Preview
 @Composable
-fun PreviewHorizontalCalendar() {
+fun HorizontalCalendarPreview() {
     var selectedDate by remember { mutableStateOf(LocalDate.now()) }
     
     HorizontalCalendar(

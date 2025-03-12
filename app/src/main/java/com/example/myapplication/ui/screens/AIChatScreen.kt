@@ -45,11 +45,13 @@ import com.example.myapplication.utils.UiState
 import com.example.myapplication.viewmodel.AIViewModel
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.ui.AbsoluteAlignment
 import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.example.myapplication.ui.components.BottomNavigationBar
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -63,7 +65,19 @@ fun AIChatScreen(
     var result by rememberSaveable { mutableStateOf(placeholderResult) }
     val uiState by aiViewModel.uiState.collectAsState()
     var messages = remember { mutableStateListOf<Pair<String, String>>() }
+    var currentRoute by remember { mutableStateOf("AIChat") }
 
+
+    Scaffold (
+        modifier = Modifier.fillMaxSize(),
+        bottomBar = {
+            BottomNavigationBar(
+                currentRoute = currentRoute,
+                navController = navController,
+                onRouteChange = { currentRoute = it }
+            )
+        }
+    ){ padding ->
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -186,6 +200,9 @@ fun AIChatScreen(
         }
 
     }
+
+    }
+
 }
 
 // Function to get dynamic time

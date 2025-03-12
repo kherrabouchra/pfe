@@ -2,10 +2,11 @@ package com.example.myapplication.ui.screens
 
 import android.os.Build
 import androidx.annotation.RequiresApi
-import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -14,8 +15,8 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -26,8 +27,9 @@ import com.example.myapplication.R
 import com.example.myapplication.ui.components.HorizontalCalendar
 import com.example.myapplication.ui.components.MedicationCard
 import com.example.myapplication.ui.components.AddMedicationBottomSheet
-import kotlinx.coroutines.launch
-import java.util.Calendar
+import com.example.myapplication.ui.components.BottomNavigationBar
+import com.example.myapplication.ui.components.DismissibleCard
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @RequiresApi(Build.VERSION_CODES.O)
@@ -36,13 +38,15 @@ fun MedicationScreen(navController: NavController) {
     val bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = false)
     val scope = rememberCoroutineScope()
     var showBottomSheet by remember { mutableStateOf(false) }
+    var currentRoute by remember { mutableStateOf("activities") }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         floatingActionButton = {
             FloatingActionButton(
                 onClick = { showBottomSheet = true },
-                containerColor = MaterialTheme.colorScheme.primary
+                containerColor = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.clip(RoundedCornerShape(46.dp)).background(Color.Black)
                 ) {
                 Icon(
                     imageVector = Icons.Default.Add,
@@ -52,11 +56,18 @@ fun MedicationScreen(navController: NavController) {
             }
         },
         floatingActionButtonPosition = FabPosition.End,
+        bottomBar = {
+            BottomNavigationBar(
+                currentRoute = currentRoute,
+                navController = navController,
+                onRouteChange = { currentRoute = it }
+            )
+        }
     ) { padding ->
         Column(modifier = Modifier.fillMaxSize()) {
             Row(modifier = Modifier.padding(12.dp),
                 verticalAlignment = Alignment.CenterVertically) {
-                IconButton(onClick = { navController.navigate("Activities") }) {
+                IconButton(onClick = { navController.navigate("activities") }) {
                     Icon(
                         Icons.Default.ArrowBack,
                         contentDescription = "Go Back",
@@ -73,26 +84,14 @@ fun MedicationScreen(navController: NavController) {
             HorizontalDivider(modifier = Modifier.fillMaxWidth())
             Column(modifier = Modifier.fillMaxWidth().verticalScroll(rememberScrollState())) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Image(
-            painter = painterResource(id = R.drawable.remedy_rafiki),
-            contentDescription = "medication",
-            modifier = Modifier.size(200.dp),
-            )
-        Text(
-                        text = "Track Your Medications",
-            style = MaterialTheme.typography.headlineSmall,
-            textAlign = TextAlign.Center,
-            fontWeight = FontWeight.Bold,
-        )
-        Text(
-                        text = "Set reminders and track your medication intake all in one place.",
-            style = MaterialTheme.typography.titleMedium,
-                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
-            modifier = Modifier.padding(horizontal = 20.dp),
-            textAlign = TextAlign.Center
-        )
-                    HorizontalDivider(modifier = Modifier.padding(vertical = 16.dp).width(270.dp))
+
                     HorizontalCalendar {}
+                    DismissibleCard(
+                        navController = navController,
+                        title = "Track Your Medications",
+                        description = "Set reminders and track your medication intake all in one place.",
+                        imageRes = R.drawable.remedy_rafiki
+                    )
                 }
                 Column(modifier = Modifier.padding(vertical = 16.dp)) {
                     Row(modifier = Modifier.fillMaxWidth().padding(horizontal = 22.dp),
@@ -115,6 +114,8 @@ fun MedicationScreen(navController: NavController) {
                 }
             }
         }
+        Spacer(modifier = Modifier.height(342.dp))
+
     }
 
     if (showBottomSheet) {

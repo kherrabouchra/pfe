@@ -4,7 +4,6 @@ import androidx.compose.animation.core.*
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -47,14 +46,9 @@ fun SplashScreenContent(onSplashComplete: () -> Unit) {
                 painter = painterResource(id = R.drawable.logochar),
                 contentDescription = "Logo",
                 modifier = Modifier
-                    .width(80.dp).alpha(alphaAnim.value)
+                    .width(100.dp).alpha(alphaAnim.value)
             )
-            Image(
-                painter = painterResource(id = R.drawable.etter),
-                contentDescription = "Logo",
-                modifier = Modifier
-                    .width(130.dp).alpha(alphaAnim.value)
-            )
+          
         }
     }
 }

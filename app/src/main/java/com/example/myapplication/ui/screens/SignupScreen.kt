@@ -20,10 +20,10 @@ import com.example.myapplication.R
 fun SignupScreen(onSignup: () -> Unit, onLoginClick: () -> Unit) {
     Column(
         modifier = Modifier
-            .fillMaxSize()
+            .fillMaxSize().fillMaxHeight()
             .padding(26.dp),
         horizontalAlignment = Alignment.Start,
-        verticalArrangement = Arrangement.Top
+        verticalArrangement = Arrangement.SpaceEvenly
     ) {
         Column {
             Image(
@@ -47,80 +47,83 @@ fun SignupScreen(onSignup: () -> Unit, onLoginClick: () -> Unit) {
         }
 
         Spacer(modifier = Modifier.height(120.dp))
-
-        OutlinedButton(
-            onClick = onSignup,
-            modifier = Modifier.fillMaxWidth().height(50.dp),
-            colors = ButtonDefaults.outlinedButtonColors(contentColor = Color.Black)
-        ) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Image(
-                    painter = painterResource(id = R.drawable.google),
-                    contentDescription = "Google",
-                    modifier = Modifier.size(24.dp)
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(text = "Continue with Google")
+        Column{
+            OutlinedButton(
+                onClick = onSignup,
+                modifier = Modifier.fillMaxWidth().height(50.dp),
+                colors = ButtonDefaults.outlinedButtonColors(contentColor = Color.Black)
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Image(
+                        painter = painterResource(id = R.drawable.google),
+                        contentDescription = "Google",
+                        modifier = Modifier.size(24.dp)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(text = "Continue with Google")
+                }
             }
-        }
+            Spacer(modifier = Modifier.height(12.dp))
 
-        Spacer(modifier = Modifier.height(12.dp))
-
-        OutlinedButton(
-            onClick = onSignup,
-            modifier = Modifier.fillMaxWidth().height(50.dp),
-            colors = ButtonDefaults.outlinedButtonColors(contentColor = Color.Black)
-        ) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Image(
-                    painter = painterResource(id = R.drawable.facebook),
-                    contentDescription = "Facebook",
-                    modifier = Modifier.size(24.dp)
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(text = "Continue with Facebook")
+            OutlinedButton(
+                onClick = onSignup,
+                modifier = Modifier.fillMaxWidth().height(50.dp),
+                colors = ButtonDefaults.outlinedButtonColors(contentColor = Color.Black)
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Image(
+                        painter = painterResource(id = R.drawable.facebook),
+                        contentDescription = "Facebook",
+                        modifier = Modifier.size(24.dp)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(text = "Continue with Facebook")
+                }
             }
-        }
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceEvenly,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Divider(
+                    modifier = Modifier
+                        .padding(vertical = 8.dp)
+                        .width(110.dp)
+                )
+                Text(
+                    text = "or",
+                    modifier = Modifier.padding(vertical = 12.dp),
+                    color = Color.Gray
+                )
+                Divider(
+                    modifier = Modifier
+                        .padding(vertical = 8.dp)
+                        .width(110.dp)
+                )
+            }
 
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceEvenly,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Divider(
-                modifier = Modifier
-                    .padding(vertical = 8.dp)
-                    .width(110.dp)
-            )
-            Text(
-                text = "or",
-                modifier = Modifier.padding(vertical = 12.dp),
-                color = Color.Gray
-            )
-            Divider(
-                modifier = Modifier
-                    .padding(vertical = 8.dp)
-                    .width(110.dp)
-            )
-        }
-
-        Row(
-            modifier = Modifier.align(Alignment.CenterHorizontally),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = "Already have an account?",
-                color = Color.Black,
-            )
-            TextButton(
-                onClick = onLoginClick
+            Row(
+                modifier = Modifier.align(Alignment.CenterHorizontally),
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Login",
-                    color = Color.Blue
+                    text = "Already have an account?",
+                    color = Color.Black,
                 )
+                TextButton(
+                    onClick = onLoginClick
+                ) {
+                    Text(
+                        text = "Login",
+                        color = Color.Blue
+                    )
+                }
             }
         }
+
+
+
+
     }
 }
 
@@ -131,4 +134,4 @@ fun SignupScreenPreview() {
         onSignup = {},
         onLoginClick = {}
     )
-} 
+}

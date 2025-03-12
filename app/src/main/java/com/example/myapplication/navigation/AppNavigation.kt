@@ -1,19 +1,17 @@
 package com.example.myapplication.navigation
 
-import android.app.Notification
+import android.app.Activity
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.internal.composableLambda
+import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.chat.AIChatScreen
 import com.example.myapplication.ui.screens.*
-import com.example.myapplication.viewmodel.AIViewModel
-import com.example.myapplication.viewmodel.MainViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.myapplication.viewmodel.FallDetectionViewModel
+import com.example.myapplication.viewmodel.*
 
 sealed class Screen(val route: String) {
     object Splash : Screen("splash")
@@ -21,29 +19,44 @@ sealed class Screen(val route: String) {
     object Signup : Screen("signup")
     object Login : Screen("login")
     object Dashboard : Screen("dashboard")
-    object Fall : Screen("FallDetectionScreen")
-    object AIChat : Screen("AIChat")
+    object Fall : Screen("fall_detection")
+    object AIChat : Screen("ai_chat")
     object Settings : Screen("settings")
     object Notifications : Screen("notifications")
     object Medication : Screen("medication")
     object Activities : Screen("activities")
     object Reminder : Screen("reminder")
+    object Vitals : Screen("vitals")
 }
-
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun AppNavigation(viewModel: MainViewModel) {
+fun AppNavigation(
+    mainViewModel: MainViewModel,
+    fallDetectionViewModel: FallDetectionViewModel? = null, // Make it optional
+    startDestination: String = Screen.Splash.route // Add parameter for custom start destination
+) {
     val navController = rememberNavController()
+    val context = LocalContext.current
+    val activity = context as? Activity
 
     NavHost(
         navController = navController,
-        startDestination = Screen.Splash.route
+        startDestination = startDestination,
     ) {
         composable(Screen.Splash.route) {
             SplashScreenContent(
                 onSplashComplete = {
-                    navController.navigate(Screen.Dashboard.route) {
-                        popUpTo(Screen.Splash.route) { inclusive = true } // To prevent back navigation
+                    // Check if we should navigate to Fall screen (from notification) or normal flow
+                    if (startDestination == Screen.Fall.route) {
+                        // This means app was launched from a fall detection notification
+                        navController.navigate(Screen.Fall.route) {
+                            popUpTo(Screen.Splash.route) { inclusive = true }
+                        }
+                    } else {
+                        // Normal app launch flow - go to onboarding
+                        navController.navigate(Screen.Onboarding.route) {
+                            popUpTo(Screen.Splash.route) { inclusive = true }
+                        }
                     }
                 }
             )
@@ -51,23 +64,21 @@ fun AppNavigation(viewModel: MainViewModel) {
 
         composable(Screen.Onboarding.route) {
             OnboardingScreen(
-                onComplete = { 
+                onComplete = {
                     navController.navigate(Screen.Signup.route) {
                         popUpTo(Screen.Onboarding.route) { inclusive = true }
                     }
                 }
             )
         }
+
         composable(Screen.Signup.route) {
             SignupScreen(
-                onSignup = {
-                    navController.navigate(Screen.Dashboard.route) {
-                        popUpTo(Screen.Signup.route) { inclusive = true }
-                    }
-                },
+                onSignup = {  },
                 onLoginClick = { navController.navigate(Screen.Login.route) }
             )
         }
+
         composable(Screen.Login.route) {
             LoginScreen(
                 onLogin = {
@@ -82,9 +93,10 @@ fun AppNavigation(viewModel: MainViewModel) {
             val aiViewModel: AIViewModel = viewModel()
             AIChatScreen(aiViewModel, navController)
         }
+
         composable(Screen.Dashboard.route) {
             DashboardScreen(
-                viewModel = viewModel,
+                viewModel = mainViewModel,
                 onSignOut = {
                     navController.navigate(Screen.Login.route) {
                         popUpTo(Screen.Dashboard.route) { inclusive = false }
@@ -97,21 +109,36 @@ fun AppNavigation(viewModel: MainViewModel) {
         composable(Screen.Settings.route) {
             SettingsScreen(navController)
         }
+
         composable(Screen.Notifications.route) {
             NotificationsScreen(navController)
         }
+
         composable(Screen.Activities.route) {
             ActivitiesScreen(navController)
         }
+
         composable(Screen.Medication.route) {
-           MedicationScreen(navController)
+            MedicationScreen(navController)
         }
+
+
         composable(Screen.Reminder.route) {
             ReminderScreen(navController)
         }
-        composable(Screen.Fall.route) {
-            val FallDetectionViewModel: FallDetectionViewModel = viewModel()
-            FallDetectionScreen( FallDetectionViewModel, {},navController,)
+        composable(Screen.Vitals.route) {
+            VitalsScreen(navController)
+        }
+
+        // Only include FallDetectionScreen if fallDetectionViewModel is provided
+        if (fallDetectionViewModel != null) {
+            composable(Screen.Fall.route) {
+                FallDetectionScreen(
+                    viewModel = fallDetectionViewModel,
+                    onResetDetection = { fallDetectionViewModel.resetFallAlert() },
+                    navController = navController
+                )
+            }
         }
     }
 }
