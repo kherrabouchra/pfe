@@ -4,7 +4,9 @@ import android.annotation.SuppressLint
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement.SpaceBetween
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -71,7 +73,7 @@ fun FallDetectionScreen(
                     verticalArrangement = Arrangement.Center
                 ) {
                     Image(
-                        modifier = Modifier.width(250.dp),
+                        modifier = Modifier.width(180.dp),
                         painter = painterResource(id = R.drawable.epilepsy_rafiki),
                         contentDescription = "Fall detection illustration",
                         alignment = Alignment.Center
@@ -85,10 +87,10 @@ fun FallDetectionScreen(
                     )
                     
                     Text(
-                        text = "Automatically detect falls and alert emergency contacts",
+                        text = "It's important to have this feature enabled if you're likely to fall. This will automatically detect falls and alert emergency contacts",
                         style = MaterialTheme.typography.bodyMedium,
                         textAlign = TextAlign.Center,
-                        modifier = Modifier.padding(vertical = 6.dp),
+                        modifier = Modifier.padding(vertical = 6.dp, horizontal = 12.dp),
                         color = Color.Gray
                     )
 
@@ -195,6 +197,26 @@ fun FallDetectionScreen(
                         }
                     }
                 }
+            }
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 8.dp),
+                horizontalArrangement = SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "Your Falls",
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                )
+                Text(
+                    text = " ",
+                    color = MaterialTheme.colorScheme.primary,
+                    style = MaterialTheme.typography.labelLarge,
+                    modifier = Modifier.clickable { /* TODO: Handle edit */ }
+                )
             }
         }
     }

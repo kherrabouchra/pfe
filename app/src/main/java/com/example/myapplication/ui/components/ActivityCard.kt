@@ -27,6 +27,7 @@ import com.example.myapplication.navigation.Screen
 @Composable
 fun ActivityCard(
     title: String,
+    desc: String,
     icon: Painter,
     navigate : String,
     navController : NavController
@@ -35,7 +36,7 @@ fun ActivityCard(
         modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 6.dp).clickable (onClick = { navController.navigate(
             navigate){
             popUpTo(Screen.Dashboard.route) { inclusive = true }
-        } } ), border = BorderStroke(0.3.dp, Color.LightGray),
+        } } ), border = BorderStroke(0.4.dp, Color.LightGray),
 
 
 
@@ -61,7 +62,7 @@ fun ActivityCard(
                     Image(
                         painter = icon,
                         contentDescription = "Notifications"
-                        ,modifier = Modifier.size(46.dp)
+                        ,modifier = Modifier.size(56.dp)
                     )
 
                 }
@@ -76,8 +77,8 @@ fun ActivityCard(
 
                         Text(
                             text = title,
-                            fontSize = 14.sp,
-                            fontWeight = FontWeight.Medium
+                            fontSize = 18.sp,
+                            fontWeight = FontWeight.Bold
                         )
 
 
@@ -85,8 +86,8 @@ fun ActivityCard(
                     Spacer(modifier = Modifier.height(4.dp))
 
                     Text(
-                        text = "fedjfoier",
-                        fontSize = 12.sp,
+                        text = desc,
+                        fontSize = 16.sp,
                         color = Color.Gray
                     )
                 }
@@ -111,6 +112,7 @@ fun ActivityCardPreview() {
     val navController = rememberNavController()
     ActivityCard(
         title = "Water intake",
+        desc = "refvkn",
         icon = painterResource(id = R.drawable.pill),
         navigate = "medication",
         navController = navController

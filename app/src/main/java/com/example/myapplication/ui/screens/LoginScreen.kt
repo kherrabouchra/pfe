@@ -20,10 +20,6 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.clickable
-import com.example.myapplication.R
-import com.example.myapplication.ui.components.BetterButton
-import com.example.myapplication.ui.components.BetterTextField
-import androidx.navigation.NavController
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 
@@ -33,20 +29,35 @@ fun LoginScreen(onLogin: () -> Unit) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
+   Surface(
+       color = MaterialTheme.colorScheme.primary,
+       modifier = Modifier.fillMaxSize()
+   ) {
+Column (verticalArrangement = Arrangement.Bottom) {
+       Card(modifier = Modifier.fillMaxWidth().fillMaxHeight(0.7f),
+           colors = CardDefaults.cardColors(
+
+               containerColor =    Color.White
+           )
+         ){
+
+
+
 
     Column(
         modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
+            .padding(26.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
         Text(
             text = "Login",
-            fontSize = 32.sp,
-            fontWeight = FontWeight.Black,
+            fontSize = 38.sp,
+            fontWeight = FontWeight.W900,
             color = Color.Black,
-            modifier = Modifier.padding(bottom = 24.dp).align(Alignment.Start)
+            modifier = Modifier.padding(bottom = 24.dp).align(Alignment.Start),
+
+
         )
         
        TextField(
@@ -89,7 +100,11 @@ fun LoginScreen(onLogin: () -> Unit) {
         Spacer(modifier = Modifier.height(16.dp))
         Button(
             onClick = onLogin,
-            modifier = Modifier.fillMaxWidth().height(50.dp)
+            modifier = Modifier.fillMaxWidth().height(50.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color.Black,
+                contentColor = Color.White
+            )
         ) {
             Text(text = "Login"
 
@@ -99,10 +114,11 @@ fun LoginScreen(onLogin: () -> Unit) {
         Text(
             text = "Trouble logging in?",
             fontSize = 14.sp,
-            color = Color.Blue,
+            color = Color.Black,
             modifier = Modifier.clickable { /* Handle trouble logging in */ }
         )
-    }
+    }   }
+   } }
 }
 
 @Preview(showSystemUi = true)

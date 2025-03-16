@@ -43,21 +43,29 @@ fun HealthMetricCard(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Column {
+            Column (  modifier = Modifier
+                .fillMaxWidth()) {
 
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(
-                    painter = painterResource(id = icon),
-                    contentDescription = null,
-                    modifier = Modifier.size(28.dp).align(Alignment.Top).padding(top=6.dp, end = 2.dp),
+            Row(verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier
+                    .fillMaxWidth()) {
 
-                    )
+
                 Text(
                     text = title,
                     style = MaterialTheme.typography.headlineSmall,
                     fontWeight = FontWeight.Bold,
 
                     )
+                if (icon != 0)(
+                        Icon(
+                            painter = painterResource(id = icon),
+                            contentDescription = null,
+                            modifier = Modifier.size(26.dp).align(Alignment.Top).padding(top=6.dp, end = 2.dp),
+
+                            )
+                        )
             }
 
                 Text(
@@ -70,7 +78,7 @@ fun HealthMetricCard(
                 Row(verticalAlignment = Alignment.Bottom) {
                     Text(
                         text = value,
-                        style = MaterialTheme.typography.displaySmall,
+                        style = MaterialTheme.typography.headlineLarge,
                         fontWeight = FontWeight.Black,
 
                     )

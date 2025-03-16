@@ -67,7 +67,7 @@ fun ActivitiesScreen(
 
 
         Column {
-            Row(modifier =Modifier.padding(12.dp)  ,
+            Row(modifier =Modifier.padding(12.dp).background(color = Color.LightGray.copy(alpha = 0.1f))  ,
                 verticalAlignment =  Alignment.CenterVertically){
 
                 IconButton(onClick = { navController.navigate("Dashboard") }) {
@@ -105,51 +105,56 @@ fun ActivitiesScreen(
                     )
                 }
             }
-
+            Spacer(modifier = Modifier.height(10.dp))
         Column (modifier = Modifier.verticalScroll(rememberScrollState())){
 
             ActivityCard(
                 title = "Medication",
+                desc = "Set Your Reminders.",
                 icon= painterResource(id = R.drawable.pill),
                 navigate= "medication",
                 navController = navController
             )
-
+            Spacer(modifier = Modifier.height(10.dp))
             ActivityCard(
-                title = "Water intake",
+                title = "Water",  desc = "Track your water intake.",
                 icon= painterResource(id = R.drawable.bottle_of_water_rafiki),
                 navigate= "medication" ,navController = navController
             )
+            Spacer(modifier = Modifier.height(10.dp))
             ActivityCard(
-                title = "Vitals",
+                title = "Vitals", desc = "fvmgdb",
                 icon= painterResource(id = R.drawable.hand) ,navigate= "vitals",
                 navController = navController
 
             )
+            Spacer(modifier = Modifier.height(10.dp))
             ActivityCard(
-                title = "Walking",
+                title = "Activity", desc = "Your walking trends.",
                 icon= painterResource(id = R.drawable.walk_ic),
-                navigate= "medication",
+                navigate= "stepcounter",
                 navController = navController
             )
+            Spacer(modifier = Modifier.height(10.dp))
             ActivityCard(
-                title = "Sleep",
+                title = "Sleep",  desc = "Track your sleep patterns.",
                 icon= painterResource(id = R.drawable.sleep_analysis_rafiki),
-                navigate= "medication",
+                navigate= "sleep",
                 navController = navController
             )
-
+            Spacer(modifier = Modifier.height(10.dp))
             ActivityCard(
-                title = "Nutritien",
+                title = "Nutrition", desc = "Log your meals.",
                 icon= painterResource(id = R.drawable.healthy_food_rafiki),
                 navigate= "medication",
                 navController = navController
             )
+            Spacer(modifier = Modifier.height(242.dp))
         }
 
         }
 
-        Spacer(modifier = Modifier.height(342.dp))
+
     }
 
 

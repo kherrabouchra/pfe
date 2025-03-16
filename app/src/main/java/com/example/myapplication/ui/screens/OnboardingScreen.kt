@@ -38,7 +38,7 @@ fun OnboardingScreen(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.SpaceBetween,
         horizontalAlignment = Alignment.CenterHorizontally
-    ) {
+    )  {
         HorizontalPager(
             state = pagerState,
             modifier = Modifier.weight(1f)
@@ -101,7 +101,7 @@ fun OnboardingScreen(
                     Icon(
                         Icons.Default.ArrowForwardIos,
                         contentDescription = "Go Forward",
-                        modifier = Modifier.requiredSize(38.dp)
+                        modifier = Modifier.requiredSize(34.dp)
                     )
                 }
             } else {
@@ -114,7 +114,7 @@ fun OnboardingScreen(
                 }
             }
         }
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(10.dp))
     }
 }
 
@@ -122,16 +122,16 @@ fun OnboardingScreen(
 fun OnboardingPage(page: Int) {
     val pageData = listOf(
         "Welcome to Better! \nYour all-in-one place wellness assistant.",
-        "Discover new features designed for you.",
-        "Stay organized and boost productivity.",
+        "Stay organized and keep track of all your health data in one place.",
+        "Wether you need long or short term assistance, Perform your daily life activities according to your needs.",
         "You're all set! Let's get started."
     )
 
     val images = listOf(
         R.drawable.better_logo,
-        R.drawable.house_bookshelves_rafiki,
-        R.drawable.house_bookshelves_rafiki,
-        R.drawable.house_bookshelves_rafiki
+        R.drawable.personal_data_rafiki,
+        R.drawable.medical_care_rafiki,
+        R.drawable.hospital_patient_rafiki
     )
 
     Column(
@@ -142,17 +142,41 @@ fun OnboardingPage(page: Int) {
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ){
-        Image(
-            modifier = Modifier.width(200.dp),
-            painter = painterResource(id = images[page]),
-            contentDescription = "Illustration"
-        )
+        Column (verticalArrangement = Arrangement.Center,
+            modifier = Modifier.fillMaxWidth()){
+           Row (
+           ) {
+               Image(
+                   modifier = Modifier.width(
+                       if(page == 0) 150.dp else 300.dp),
+                   painter = painterResource(id = images[page]),
+                   contentDescription = "Illustration"
+               )
+
+           }
+
+            if (page == 2) (
+                    Row() {
+                        Image(
+                            modifier = Modifier.width(
+                                if(page == 0) 150.dp else 300.dp),
+                            painter = painterResource(id = R.drawable.hospital_patient_rafiki),
+                            contentDescription = "Illustration"
+                        )
+                    }
+
+                    )
+
+        }
+
         Spacer(modifier = Modifier.height(16.dp))
         Text(
             text = pageData[page],
-            fontSize = 22.sp,
-            fontWeight = FontWeight.Bold,
-            textAlign = TextAlign.Center
+            fontSize = 18.sp,
+            fontWeight = FontWeight.W500,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.padding(horizontal = 22.dp),
+
         )
     }
 }

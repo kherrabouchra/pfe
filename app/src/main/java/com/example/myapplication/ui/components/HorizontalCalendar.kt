@@ -51,6 +51,7 @@ fun HorizontalCalendar(
     
     // Add formatter for the month and year
     val dayMonthFormatter = remember { DateTimeFormatter.ofPattern("dd MMMM") }
+    val yearFormatter = remember { DateTimeFormatter.ofPattern("yyyy") }
 
     val monthYearFormatter = remember { DateTimeFormatter.ofPattern("MMMM yyyy") }
     val displayDate = remember(firstVisibleWeekOffset) {
@@ -58,7 +59,7 @@ fun HorizontalCalendar(
     }
 Column (modifier = Modifier.fillMaxWidth()) {
     Spacer(modifier = Modifier.height(10.dp))
-    Row (verticalAlignment = Alignment.Bottom,
+    Row (verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
         modifier = Modifier.fillMaxWidth()){
 
@@ -69,11 +70,12 @@ Column (modifier = Modifier.fillMaxWidth()) {
             modifier = Modifier.padding(horizontal = 10.dp)
         )
         Text(
-            text= "${currentDate.format(dayMonthFormatter)}",
+            text= "${currentDate.format(dayMonthFormatter)}\n${currentDate.format(yearFormatter)}",
             fontWeight = FontWeight.Black,
-            style = MaterialTheme.typography.displaySmall,
+            style = MaterialTheme.typography.headlineMedium,
             modifier = Modifier.padding(horizontal = 10.dp),
-            color = Color.Gray
+            color = Color.Black.copy(alpha = 0.3f),
+            textAlign = TextAlign.End
         )
     }
 
@@ -103,7 +105,7 @@ Column (modifier = Modifier.fillMaxWidth()) {
         Column(modifier = Modifier.padding(6.dp).clip(RoundedCornerShape(16.dp))){
         Row(
             modifier = Modifier
-                .background(Color.LightGray.copy(alpha = 0.5f)).fillMaxWidth(0.95f)
+                .background(Color.LightGray.copy(alpha = 0.3f)).fillMaxWidth(0.95f)
                 .padding(horizontal = 16.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically

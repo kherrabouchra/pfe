@@ -38,6 +38,10 @@ class MainActivity : ComponentActivity() {
                 ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.POST_NOTIFICATIONS), REQUEST_CODE_NOTIFICATION_PERMISSION)
             }
         }
+        
+        // Start the StepCounterService for background step counting
+        val serviceIntent = Intent(this, com.example.myapplication.service.StepCounterService::class.java)
+        startService(serviceIntent)
 
         setContent {
             BetterAppTheme {

@@ -27,6 +27,8 @@ sealed class Screen(val route: String) {
     object Activities : Screen("activities")
     object Reminder : Screen("reminder")
     object Vitals : Screen("vitals")
+    object Sleep : Screen("sleep")
+    object StepCounter : Screen("stepcounter")
 }
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -128,6 +130,14 @@ fun AppNavigation(
         }
         composable(Screen.Vitals.route) {
             VitalsScreen(navController)
+        }
+        
+        composable(Screen.Sleep.route) {
+            SleepScreen(navController)
+        }
+        
+        composable(Screen.StepCounter.route) {
+            StepCounterScreen(navController)
         }
 
         // Only include FallDetectionScreen if fallDetectionViewModel is provided

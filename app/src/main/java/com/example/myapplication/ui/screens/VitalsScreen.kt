@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.layout.size
@@ -16,6 +17,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
@@ -116,12 +119,49 @@ fun VitalsScreen(
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
 
                 HorizontalCalendar {}
-                DismissibleCard(
+                Row(modifier = Modifier.padding(16.dp),
+                    verticalAlignment = Alignment.CenterVertically){
+                    Column (modifier = Modifier.weight(2F)){
+                        Text(
+                            text = "Track Your Medications",
+                            style = MaterialTheme.typography.headlineSmall,
+                            textAlign = TextAlign.Start,
+                            fontWeight = FontWeight.Black,
+                        )
+                        Text(
+                            text = "Set reminders and take your medications on time.",
+                            style = MaterialTheme.typography.titleMedium,
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
+                            textAlign = TextAlign.Start,
+                            modifier = Modifier.padding(horizontal = 6.dp)
+                        )
+                        Button(
+                            onClick = { showBottomSheet = true },
+                            modifier = Modifier.height(42.dp).padding(top = 8.dp),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = MaterialTheme.colorScheme.primary,
+                                contentColor = Color.White
+                            )
+                        ) {
+                            Text(text = "Add Reminder"
+
+                            )
+                        }
+                    }
+                    Column(modifier = Modifier.weight(1.5f)) {
+                        Image(
+                            painter = painterResource(id = R.drawable.remedy_rafiki),
+                            contentDescription = "medication",
+                            modifier = Modifier.size(160.dp)
+                        )
+                    }
+                }
+               /* DismissibleCard(
                     navController = navController,
                     title = "Track Your Vitals",
                     description = "Set reminders and track your medication intake all in one place.",
                     imageRes = R.drawable.circulatory_system_rafiki
-                )
+                )*/
             }
         }
 

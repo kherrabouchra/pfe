@@ -2,6 +2,7 @@ package com.example.myapplication.ui.screens
 
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -17,6 +18,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -64,7 +66,7 @@ fun MedicationScreen(navController: NavController) {
             )
         }
     ) { padding ->
-        Column(modifier = Modifier.fillMaxSize()) {
+        Column(modifier = Modifier.fillMaxSize().background(color = Color.LightGray.copy(alpha = 0.1f))) {
             Row(modifier = Modifier.padding(12.dp),
                 verticalAlignment = Alignment.CenterVertically) {
                 IconButton(onClick = { navController.navigate("activities") }) {
@@ -86,12 +88,50 @@ fun MedicationScreen(navController: NavController) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
 
                     HorizontalCalendar {}
-                    DismissibleCard(
+
+                    Row(modifier = Modifier.padding(16.dp),
+                        verticalAlignment = Alignment.CenterVertically){
+                      Column (modifier = Modifier.weight(2F)){
+                          Text(
+                              text = "Track Your Medications",
+                              style = MaterialTheme.typography.headlineSmall,
+                              textAlign = TextAlign.Start,
+                              fontWeight = FontWeight.Black,
+                          )
+                          Text(
+                              text = "Set reminders and take your medications on time.",
+                              style = MaterialTheme.typography.titleMedium,
+                              color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
+                              textAlign = TextAlign.Start,
+                              modifier = Modifier.padding(horizontal = 6.dp)
+                          )
+                          Button(
+                              onClick = { showBottomSheet = true },
+                              modifier = Modifier.height(42.dp).padding(top = 8.dp),
+                              colors = ButtonDefaults.buttonColors(
+                                  containerColor = MaterialTheme.colorScheme.primary,
+                                  contentColor = Color.White
+                              )
+                          ) {
+                              Text(text = "Add Reminder"
+
+                              )
+                          }
+                      }
+                        Column(modifier = Modifier.weight(1.5f)) {
+                            Image(
+                                painter = painterResource(id = R.drawable.remedy_rafiki),
+                                contentDescription = "medication",
+                                modifier = Modifier.size(160.dp)
+                            )
+                        }
+                    }
+                   /* DismissibleCard(
                         navController = navController,
                         title = "Track Your Medications",
                         description = "Set reminders and track your medication intake all in one place.",
                         imageRes = R.drawable.remedy_rafiki
-                    )
+                    )*/
                 }
                 Column(modifier = Modifier.padding(vertical = 16.dp)) {
                     Row(modifier = Modifier.fillMaxWidth().padding(horizontal = 22.dp),

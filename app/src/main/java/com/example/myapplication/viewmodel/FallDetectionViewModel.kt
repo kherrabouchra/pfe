@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 class FallDetectionViewModel(application: Application) : AndroidViewModel(application) {
-    private val _isDetectionEnabled = MutableStateFlow(true)
+    private val _isDetectionEnabled = MutableStateFlow(false)
     val isDetectionEnabled: StateFlow<Boolean> = _isDetectionEnabled
 
     private val _fallAlertText = MutableStateFlow("")

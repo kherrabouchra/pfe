@@ -74,7 +74,7 @@ fun StepsCard(
                  ) {
                      Text(
                          text = steps.toString(),
-                         style = MaterialTheme.typography.displaySmall,
+                         style = MaterialTheme.typography.headlineMedium,
                          fontWeight = FontWeight.Black
                      )
                      Text(

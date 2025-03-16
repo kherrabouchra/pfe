@@ -3,6 +3,7 @@ package com.example.myapplication.ui.screens
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Arrangement.SpaceBetween
 import androidx.compose.foundation.layout.Arrangement.spacedBy
 import androidx.compose.foundation.layout.Box
@@ -58,6 +59,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.TextButton
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.times
@@ -71,6 +73,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.chat.AIChatScreen
 import com.example.myapplication.navigation.Screen
 import com.example.myapplication.ui.components.BottomNavigationBar
+import com.example.myapplication.ui.components.WaterIntakeCard
 import kotlin.math.roundToInt
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
@@ -84,10 +87,11 @@ fun DashboardScreen(
     var moodValue by remember { mutableStateOf(1f) }
     var checkedStates by remember { mutableStateOf(listOf(true, false, false, true)) }
     var showChat by remember { mutableStateOf(false) }
+    var waterIntake by remember { mutableIntStateOf(0) }
 
     Box(modifier = Modifier.fillMaxSize()) {
         Scaffold(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier.fillMaxSize().background(color = Color.LightGray.copy(alpha = 0.1f)),
             floatingActionButton = {
                 FloatingActionButton(
                     modifier = Modifier.padding(bottom = 2.dp),
@@ -110,7 +114,7 @@ fun DashboardScreen(
             }
         ) { padding ->
             Column(
-                modifier = Modifier
+                modifier = Modifier.background(color = Color.LightGray.copy(alpha = 0.1f))
                     .fillMaxSize()
                     .verticalScroll(rememberScrollState())
             ) {
@@ -120,19 +124,43 @@ fun DashboardScreen(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(horizontal = 18.dp )
-                                .height(38.dp),
+                                .height(50.dp),
                             horizontalArrangement = SpaceBetween,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Image(
-                                painter = painterResource(id = R.drawable.better_logo),
-                                contentDescription = "logo",
-                                modifier = Modifier.size(130.dp),
-                                alignment = Alignment.CenterStart
+
+                    Row (horizontalArrangement = Arrangement.Absolute.Left,){
+
+                        Image(
+                            painter = painterResource(id = R.drawable.logochar),
+                            contentDescription = "logo",
+                            modifier = Modifier.size(150.dp).weight(1f) ,
+
+                        )
+                        Column (horizontalAlignment = Alignment.Start,
+                            modifier =Modifier.weight(5f) ){
+                            Text(
+                                text = "Hello,",
+                                style = MaterialTheme.typography.titleMedium,
+                                modifier = Modifier.padding(  horizontal = 12.dp),
+                                color= Color.Gray,
+                                fontWeight = FontWeight.Medium
+
                             )
-                    Box(
-                        contentAlignment = Alignment.TopEnd
-                    ) {
+                            Text(
+                                text = "Johnny" +"!",
+                                style = MaterialTheme.typography.titleLarge,
+                                modifier = Modifier.padding(  horizontal = 12.dp),
+                                fontWeight = FontWeight.Bold
+
+                            )
+
+
+                        }
+                        Box(
+                            contentAlignment = Alignment.TopEnd,
+                            modifier =Modifier.weight(1f)
+                        ) {
 
                             IconButton(
                                 onClick = {
@@ -150,14 +178,18 @@ fun DashboardScreen(
                             }
 
 
-                        Badge(
-                            containerColor = Color.Red,
-                            contentColor = Color.White,
-                            modifier = Modifier.offset(x = (-6).dp, y = (6).dp)
-                        ) {
-                            Text("4")
+                            Badge(
+                                containerColor = Color.Red,
+                                contentColor = Color.White,
+                                modifier = Modifier.offset(x = (-6).dp, y = (6).dp)
+                            ) {
+                                Text("4")
+                            }
                         }
+
                     }
+
+
 
                 }
                 //HorizontalDivider(
@@ -169,20 +201,11 @@ fun DashboardScreen(
 
 
 
-                        Text(
-                            text = "Hello, Johnny" +"!",
-                            style = MaterialTheme.typography.titleLarge,
-                            modifier = Modifier.padding(  horizontal = 12.dp),
-                            color= Color.Gray,
-                            fontWeight = FontWeight.Medium
-
-                        )
-
-
+                    Spacer(modifier = Modifier.height(12.dp))
 
                     Text(
                         text = "How are you feeling today?",
-                        style = MaterialTheme.typography.headlineSmall,
+                        style = MaterialTheme.typography.titleLarge,
                         modifier = Modifier.padding(  horizontal = 14.dp),
                         fontWeight = FontWeight.Bold
                     )
@@ -281,18 +304,30 @@ fun DashboardScreen(
                             modifier = Modifier.clickable { /* TODO: Handle edit */ }
                         )
                     }
-                    // Steps Card
+
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(vertical = 12.dp)
+                            .padding(vertical = 12.dp),
+                        horizontalArrangement = spacedBy(16.dp)
                     ) {
-                        StepsCard(
-                            steps = 2601,
-                            goal = 5000
+                        HealthMetricCard(
+                            title = "Health Condition",
+                            value = "Good",
+                            unit = " ",
+                            subtitle = "Last 30 days",
+                            icon = 0,
+                            modifier = Modifier.weight(1f)
+                        )
+                        HealthMetricCard(
+                            title = "Symptoms",
+                            value = "\n None",
+                            unit = " ",
+                            subtitle = "Latest",
+                            icon = 0,
+                            modifier = Modifier.weight(1f)
                         )
                     }
-                    // Health Metrics Cards
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -316,6 +351,23 @@ fun DashboardScreen(
                             modifier = Modifier.weight(1f)
                         )
                     }
+
+                  Row {
+                      WaterIntakeCard(currentIntake = waterIntake,
+                          targetIntake = 2500,
+                          onIntakeChange = { waterIntake = it } )
+                  }
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 12.dp)
+                    ) {
+                        StepsCard(
+                            steps = 2601,
+                            goal = 5000
+                        )
+                    }
+
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
