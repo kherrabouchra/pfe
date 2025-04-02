@@ -1,5 +1,12 @@
 package com.example.myapplication.ui.screens
 
+import android.Manifest
+import android.content.Context
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.net.Uri
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -16,6 +23,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -62,7 +70,10 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.times
+import androidx.core.content.ContextCompat
+import androidx.compose.ui.graphics.ColorFilter
 import com.example.myapplication.R
 import com.example.myapplication.ui.components.HealthMetricCard
 import com.example.myapplication.ui.components.RecommendationCard
@@ -70,6 +81,7 @@ import com.example.myapplication.ui.components.StepsCard
 import com.example.myapplication.viewmodel.MainViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import androidx.test.espresso.base.Default
 import com.example.chat.AIChatScreen
 import com.example.myapplication.navigation.Screen
 import com.example.myapplication.ui.components.BottomNavigationBar
@@ -91,11 +103,12 @@ fun DashboardScreen(
 
     Box(modifier = Modifier.fillMaxSize()) {
         Scaffold(
-            modifier = Modifier.fillMaxSize().background(color = Color.LightGray.copy(alpha = 0.1f)),
+            modifier = Modifier.fillMaxSize().background(color = Color.LightGray.copy(alpha = 0.3f)),
             floatingActionButton = {
+                val context = LocalContext.current
                 FloatingActionButton(
                     modifier = Modifier.padding(bottom = 2.dp),
-                    onClick = { showChat = true },
+                    onClick = { makeEmergencyCall(context) },
                     containerColor = MaterialTheme.colorScheme.primary
                 ) {
                     Icon(
@@ -118,91 +131,130 @@ fun DashboardScreen(
                     .fillMaxSize()
                     .verticalScroll(rememberScrollState())
             ) {
-                Spacer(modifier = Modifier.height(12.dp))
 
-                Row(
+                Box(
+                    modifier = Modifier.fillMaxWidth()
+                        .height(160.dp)
+                        .background(color = MaterialTheme.colorScheme.primary)
+                ){
+                    Column {
+
+                        Spacer(modifier = Modifier.height(16.dp))
+
+                        Row(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(horizontal = 18.dp )
-                                .height(50.dp),
+                                .height(70.dp),
                             horizontalArrangement = SpaceBetween,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
 
-                    Row (horizontalArrangement = Arrangement.Absolute.Left,){
+                            Row (horizontalArrangement = Arrangement.Absolute.Left,
+                                verticalAlignment = Alignment.CenterVertically){
 
-                        Image(
-                            painter = painterResource(id = R.drawable.logochar),
-                            contentDescription = "logo",
-                            modifier = Modifier.size(150.dp).weight(1f) ,
+                                Image(
+                                    painter = painterResource(id = R.drawable.logo_simple),
+                                    contentDescription = "logo",
+                                    modifier = Modifier.size(190.dp).weight(2f),
+                                    colorFilter = ColorFilter.tint(Color.White) ,
 
-                        )
-                        Column (horizontalAlignment = Alignment.Start,
-                            modifier =Modifier.weight(5f) ){
-                            Text(
-                                text = "Hello,",
-                                style = MaterialTheme.typography.titleMedium,
-                                modifier = Modifier.padding(  horizontal = 12.dp),
-                                color= Color.Gray,
-                                fontWeight = FontWeight.Medium
+                                    )
+                                Column (horizontalAlignment = Alignment.Start,
+                                    modifier =Modifier.weight(5f) ){
+                                    Text(
+                                        text = "Hello,",
+                                        style = MaterialTheme.typography.titleMedium,
+                                        modifier = Modifier.padding(  horizontal = 12.dp),
+                                        fontWeight = FontWeight.Medium,
+                                        color=Color.White
 
-                            )
-                            Text(
-                                text = "Johnny" +"!",
-                                style = MaterialTheme.typography.titleLarge,
-                                modifier = Modifier.padding(  horizontal = 12.dp),
-                                fontWeight = FontWeight.Bold
+                                    )
+                                    Text(
+                                        text = "Johnny" +"!",
+                                        style = MaterialTheme.typography.headlineLarge,
+                                        modifier = Modifier.padding(  horizontal = 12.dp),
+                                        fontWeight = FontWeight.Bold,
+                                        color=Color.White
 
-                            )
+                                    )
 
 
-                        }
-                        Box(
-                            contentAlignment = Alignment.TopEnd,
-                            modifier =Modifier.weight(1f)
-                        ) {
-
-                            IconButton(
-                                onClick = {
-                                    navController.navigate(Screen.Notifications.route) {
-                                        popUpTo(Screen.Dashboard.route) { inclusive = true }
-                                    }
                                 }
-                            ) {
-                                Icon(
-                                    painter = painterResource(id = R.drawable.ic_notif),
-                                    contentDescription = "Notifications",
-                                    modifier = Modifier.size(32.dp),
-                                    tint = MaterialTheme.colorScheme.onSurface
-                                )
+                                Box(
+                                    contentAlignment = Alignment.TopEnd,
+                                    modifier =Modifier.weight(1f)
+                                ) {
+/*
+                                IconButton(
+                                    onClick = {
+                                        navController.navigate(Screen.Notifications.route) {
+                                            popUpTo(Screen.Dashboard.route) { inclusive = true }
+                                        }
+                                    }
+                                ) {
+                                    Icon(
+                                        painter = painterResource(id = R.drawable.ic_notif),
+                                        contentDescription = "Notifications",
+                                        modifier = Modifier.size(32.dp),
+                                        tint = Color.White
+                                    )
+                                }
+
+
+                                Badge(
+                                    containerColor = Color.Red,
+                                    contentColor = Color.White,
+                                    modifier = Modifier.offset(x = (-6).dp, y = (6).dp)
+                                ) {
+                                    Text("4")
+                                }*/
+                                }
+
                             }
 
 
-                            Badge(
-                                containerColor = Color.Red,
-                                contentColor = Color.White,
-                                modifier = Modifier.offset(x = (-6).dp, y = (6).dp)
-                            ) {
-                                Text("4")
-                            }
+
                         }
-
                     }
 
-
-
                 }
+
                 //HorizontalDivider(
                   //  modifier = Modifier
                    //     .padding(top = 12.dp, bottom = 16.dp)
                    //     .fillMaxWidth()
                // )
-                Column(modifier = Modifier.padding(14.dp)) {
+                Column(modifier = Modifier.padding(14.dp).offset(y = (-66).dp)) {
 
 
 
-                    Spacer(modifier = Modifier.height(12.dp))
+                    Spacer(modifier = Modifier.height(6.dp))
 
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 0.dp, bottom = 0.dp),
+                        horizontalArrangement = spacedBy(16.dp)
+                    ) {
+                        HealthMetricCard(
+                            title = "Health Score",
+                            value = "Good",
+                            unit = " ",
+                            subtitle = "Last 30 days",
+                            icon = 0,
+                            modifier = Modifier.weight(1f)
+                        )
+                        HealthMetricCard(
+                            title = "Symptoms",
+                            value = "None",
+                            unit = " ",
+                            subtitle = "Latest\n ",
+                            icon = 0,
+                            modifier = Modifier.weight(1f)
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(16.dp))
                     Text(
                         text = "How are you feeling today?",
                         style = MaterialTheme.typography.titleLarge,
@@ -232,7 +284,7 @@ fun DashboardScreen(
                                     colors = SliderDefaults.colors(
                                         thumbColor = Color.Transparent, // Hide default thumb
                                         activeTrackColor = MaterialTheme.colorScheme.primary,
-                                        inactiveTrackColor = MaterialTheme.colorScheme.surfaceVariant
+                                        inactiveTrackColor = Color.LightGray.copy(alpha = 0.5f)
                                     ),
                                     modifier = Modifier.fillMaxWidth()
                                 )
@@ -260,25 +312,27 @@ fun DashboardScreen(
 
                         }
                         Row(
-                            modifier = Modifier.fillMaxWidth().padding(horizontal=16.dp),
-                            horizontalArrangement = SpaceBetween
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 16.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween
                         ) {
                             Text(
                                 text = "Awful",
                                 style = MaterialTheme.typography.bodySmall,
-                                color = if (moodValue < 0.33f) MaterialTheme.colorScheme.primary
+                                color = if (moodValue.roundToInt() == 0) MaterialTheme.colorScheme.primary
                                 else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                             )
                             Text(
                                 text = "Neutral",
                                 style = MaterialTheme.typography.bodySmall,
-                                color = if (moodValue in 0.33f..0.66f) MaterialTheme.colorScheme.primary
+                                color = if (moodValue.roundToInt() == 1) MaterialTheme.colorScheme.primary
                                 else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                             )
                             Text(
                                 text = "Good",
                                 style = MaterialTheme.typography.bodySmall,
-                                color = if (moodValue > 0.66f) MaterialTheme.colorScheme.primary
+                                color = if (moodValue.roundToInt() == 2) MaterialTheme.colorScheme.primary
                                 else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                             )
                         }
@@ -308,24 +362,11 @@ fun DashboardScreen(
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(vertical = 12.dp),
-                        horizontalArrangement = spacedBy(16.dp)
+                            .padding(vertical = 12.dp)
                     ) {
-                        HealthMetricCard(
-                            title = "Health Condition",
-                            value = "Good",
-                            unit = " ",
-                            subtitle = "Last 30 days",
-                            icon = 0,
-                            modifier = Modifier.weight(1f)
-                        )
-                        HealthMetricCard(
-                            title = "Symptoms",
-                            value = "\n None",
-                            unit = " ",
-                            subtitle = "Latest",
-                            icon = 0,
-                            modifier = Modifier.weight(1f)
+                        StepsCard(
+                            steps = 2601,
+                            goal = 5000
                         )
                     }
                     Row(
@@ -352,21 +393,6 @@ fun DashboardScreen(
                         )
                     }
 
-                  Row {
-                      WaterIntakeCard(currentIntake = waterIntake,
-                          targetIntake = 2500,
-                          onIntakeChange = { waterIntake = it } )
-                  }
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 12.dp)
-                    ) {
-                        StepsCard(
-                            steps = 2601,
-                            goal = 5000
-                        )
-                    }
 
                     Row(
                         modifier = Modifier
@@ -387,9 +413,19 @@ fun DashboardScreen(
                             value = "50",
                             unit = "MS",
                             subtitle = "Latest",
-                            icon = R.drawable.ic_sleep,
+                            icon = R.drawable.sleep,
                             modifier = Modifier.weight(1f)
                         )
+                    }
+
+                    Row (
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 12.dp)
+                    ) {
+                        WaterIntakeCard(currentIntake = waterIntake,
+                            targetIntake = 2500,
+                            onIntakeChange = { waterIntake = it } )
                     }
 
 
@@ -579,6 +615,34 @@ private fun ActivityLogItem(
             color = if (isCompleted) MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
             else MaterialTheme.colorScheme.onSurface
         )
+    }
+}
+
+// Function to make emergency call
+private fun makeEmergencyCall(context: Context) {
+    val emergencyPhoneNumber = "123456789" // Using the same number as in VoiceCommandService
+    
+    // Check for phone call permission
+    if (ContextCompat.checkSelfPermission(context, Manifest.permission.CALL_PHONE) 
+            == PackageManager.PERMISSION_GRANTED) {
+        try {
+            // Create intent to make a phone call
+            val callIntent = Intent(Intent.ACTION_CALL).apply {
+                data = Uri.parse("tel:$emergencyPhoneNumber")
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            }
+            context.startActivity(callIntent)
+            
+            // Show toast notification
+            Toast.makeText(context, "Emergency call initiated", Toast.LENGTH_SHORT).show()
+            
+        } catch (e: Exception) {
+            Log.e("DashboardScreen", "Failed to initiate emergency call", e)
+            Toast.makeText(context, "Failed to make emergency call", Toast.LENGTH_SHORT).show()
+        }
+    } else {
+        Log.e("DashboardScreen", "Cannot make emergency call - CALL_PHONE permission not granted")
+        Toast.makeText(context, "Call permission not granted", Toast.LENGTH_SHORT).show()
     }
 }
 

@@ -100,10 +100,10 @@ fun MedicationScreen(navController: NavController) {
                           )
                           Text(
                               text = "Set reminders and take your medications on time.",
-                              style = MaterialTheme.typography.titleMedium,
+                              style = MaterialTheme.typography.titleSmall,
                               color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
                               textAlign = TextAlign.Start,
-                              modifier = Modifier.padding(horizontal = 6.dp)
+                               
                           )
                           Button(
                               onClick = { showBottomSheet = true },
@@ -122,7 +122,7 @@ fun MedicationScreen(navController: NavController) {
                             Image(
                                 painter = painterResource(id = R.drawable.remedy_rafiki),
                                 contentDescription = "medication",
-                                modifier = Modifier.size(160.dp)
+                                modifier = Modifier.size(130.dp).requiredSize(190.dp)
                             )
                         }
                     }
@@ -148,19 +148,36 @@ fun MedicationScreen(navController: NavController) {
                             modifier = Modifier.clickable { /* TODO: Handle navigation */ }
                         )
                     }
-                    repeat(4) {
+                  /*  repeat(4) {
                         MedicationCard(title = "Aspirin", subtitle = "Take with food", time = "18:13", id=1, navController)
+                    }*/
+
+                    Column (modifier =Modifier.fillMaxWidth(),
+                        horizontalAlignment = Alignment.CenterHorizontally){
+                        Spacer(modifier = Modifier.height(56.dp))
+                        Image(
+                            painter = painterResource(id = R.drawable.pillsearch),
+                            contentDescription = "medication",
+                            modifier = Modifier.size(130.dp).requiredSize(160.dp)
+                        )
+                        Text(
+                            text = "You have no medications\n reminders yet.",
+                            style = MaterialTheme.typography.titleSmall,
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
+                            textAlign = TextAlign.Center
+                        )
                     }
                 }
+                Spacer(modifier = Modifier.height(342.dp))
             }
         }
-        Spacer(modifier = Modifier.height(342.dp))
+
 
     }
 
     if (showBottomSheet) {
         ModalBottomSheet(
-            onDismissRequest = { showBottomSheet = false }, sheetState = bottomSheetState
+            onDismissRequest = { showBottomSheet = false }, sheetState = bottomSheetState, containerColor = Color.White
 
         ) {
             AddMedicationBottomSheet(onDismiss = { showBottomSheet = false })

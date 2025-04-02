@@ -21,6 +21,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.clickable
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
+import com.example.myapplication.R
 import androidx.compose.ui.tooling.preview.Preview
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -52,8 +55,8 @@ Column (verticalArrangement = Arrangement.Bottom) {
     ) {
         Text(
             text = "Login",
-            fontSize = 38.sp,
-            fontWeight = FontWeight.W900,
+            fontSize = 40.sp,
+            fontFamily = FontFamily(Font(R.font.archivo_black)),
             color = Color.Black,
             modifier = Modifier.padding(bottom = 24.dp).align(Alignment.Start),
 
@@ -127,4 +130,4 @@ fun LoginScreenPreview() {
     LoginScreen(
         onLogin = {}
     )
-} 
+}

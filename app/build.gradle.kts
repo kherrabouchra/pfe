@@ -2,7 +2,7 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("com.google.gms.google-services")
-
+    id("kotlin-parcelize")
 }
 
 android {
@@ -15,10 +15,7 @@ android {
         targetSdk = 34
         versionCode = 3
         versionName = "3.0"
-
-        // Use the API key from project properties
         buildConfigField("String", "DEEPSICK_API_KEY", "\"${project.properties["DEEPSICK_API_KEY"]}\"")
-
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary = true
@@ -28,7 +25,10 @@ android {
     buildTypes {
         release {
             isMinifyEnabled = false
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
         }
     }
 
@@ -66,46 +66,61 @@ configurations.all {
 }
 
 dependencies {
-    // Benchmarking library
-    implementation(libs.benchmark.common)
-
-    // Generative AI library
-    implementation(libs.generativeai)
-
-    // Compose BOM (manages compatible versions of Compose libraries)
+    // Compose BOM
     val composeBom = platform("androidx.compose:compose-bom:2024.02.00")
     implementation(composeBom)
     androidTestImplementation(composeBom)
 
-    // Core libraries
+    // Core Libraries
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
     implementation("androidx.activity:activity-compose:1.8.2")
-    implementation ("com.google.firebase:firebase-auth-ktx")
-    implementation ("com.google.android.gms:play-services-auth:20.7.0")
+
+    // Firebase
+    implementation(platform("com.google.firebase:firebase-bom:32.7.0"))
+    implementation("com.google.firebase:firebase-auth-ktx")
     implementation("com.google.firebase:firebase-analytics")
-    implementation(platform("com.google.firebase:firebase-bom:33.10.0"))
+    implementation ("com.google.firebase:firebase-firestore-ktx")
+
+    // Other Firebase products you might need
+    implementation ("com.google.firebase:firebase-auth")
+    implementation ("com.google.firebase:firebase-firestore")
+    implementation ("com.google.firebase:firebase-storage")
+    implementation("com.google.android.gms:play-services-auth:20.7.0")
+
+    // DataStore
     implementation("androidx.datastore:datastore-preferences:1.0.0")
 
-    // Compose UI libraries
+    // Compose UI
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.material:material-icons-extended")
-    // Explicitly add Material3 without a version number (BOM or resolution strategy will manage it)
     implementation("androidx.compose.material3:material3")
 
-    // Debugging libraries
+    // Debug UI
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
 
-    // Retrofit and OkHttp for network calls
+    // Retrofit / OkHttp
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
     implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
-    implementation "androidx.camera:camera-core:1.3.0"
-    implementation "androidx.camera:camera-lifecycle:1.3.0"
-    implementation "androidx.camera:camera-view:1.3.0"
+
+    // CameraX
+    implementation(libs.androidx.camera.core)
+    implementation(libs.androidx.camera.camera2)
+    implementation(libs.androidx.camera.lifecycle)
+    implementation(libs.androidx.camera.view)
+    implementation("androidx.camera:camera-camera2:1.3.0")
+
+    // Accompanist Permissions
     implementation("com.google.accompanist:accompanist-permissions:0.34.0")
+
+    // Your additional libraries
+    implementation(libs.benchmark.common)
+    implementation(libs.generativeai)
+    implementation 'com.google.guava:guava:31.1-android'
 }
+apply plugin: 'com.google.gms.google-services'

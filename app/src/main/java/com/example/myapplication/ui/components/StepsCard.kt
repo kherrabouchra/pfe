@@ -59,33 +59,33 @@ fun StepsCard(
 
 
             }
-             Column(
-                 modifier= Modifier.padding(top = 42.dp).weight(0.7f)
-             ){
-                 StepsProgressArc(
-                     progress = steps.toFloat() / goal.toFloat(),
-                     modifier = Modifier
-                         .height(40.dp).padding(horizontal = 29.dp) ,
-                 )
-                 Row(
-                     modifier = Modifier.fillMaxWidth()  ,
-                     verticalAlignment = Alignment.Bottom,
-                     horizontalArrangement = Arrangement.Center
-                 ) {
-                     Text(
-                         text = steps.toString(),
-                         style = MaterialTheme.typography.headlineMedium,
-                         fontWeight = FontWeight.Black
-                     )
-                     Text(
-                         text = "/$goal",
-                         style = MaterialTheme.typography.bodyLarge,
-                         color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
-                         modifier = Modifier.padding( bottom = 6.dp, start = 4.dp)
-                     )
-                 }
+            Column(
+                modifier= Modifier.padding(top = 42.dp).weight(0.7f)
+            ){
+                StepsProgressArc(
+                    progress = steps.toFloat() / goal.toFloat(),
+                    modifier = Modifier
+                        .height(40.dp).padding(horizontal = 29.dp) ,
+                )
+                Row(
+                    modifier = Modifier.fillMaxWidth()  ,
+                    verticalAlignment = Alignment.Bottom,
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    Text(
+                        text = steps.toString(),
+                        style = MaterialTheme.typography.headlineMedium,
+                        fontWeight = FontWeight.Black
+                    )
+                    Text(
+                        text = "/$goal",
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
+                        modifier = Modifier.padding( bottom = 6.dp, start = 4.dp)
+                    )
+                }
 
-             }
+            }
 
 
 
@@ -100,6 +100,6 @@ fun StepsCard(
 fun StepsCardPreview() {
     StepsCard(
         steps = 3500,
-        goal = 10000
+        goal = 5000
     )
 } 

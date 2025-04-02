@@ -29,9 +29,8 @@ fun BetterButton(
         onClick = onClick,
         modifier = modifier
             .fillMaxWidth()
-            .height(56.dp)
+            .height(48.dp)
             .padding(horizontal = 24.dp),
-        shape = RoundedCornerShape(12.dp),
         colors = if (isTransparent) {
             ButtonDefaults.buttonColors(
                 containerColor = Color.White,

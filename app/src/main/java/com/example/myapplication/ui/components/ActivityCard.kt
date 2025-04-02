@@ -12,6 +12,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
@@ -45,7 +46,7 @@ fun ActivityCard(
             containerColor = Color.White
         ),
         elevation = CardDefaults.cardElevation(
-            defaultElevation = 4.dp
+            defaultElevation = 3.dp
         )
     ) {
         Row(
@@ -62,7 +63,7 @@ fun ActivityCard(
                     Image(
                         painter = icon,
                         contentDescription = "Notifications"
-                        ,modifier = Modifier.size(56.dp)
+                        ,modifier = Modifier.size(54.dp)
                     )
 
                 }
@@ -87,7 +88,7 @@ fun ActivityCard(
 
                     Text(
                         text = desc,
-                        fontSize = 16.sp,
+                        fontSize = 14.sp,
                         color = Color.Gray
                     )
                 }
@@ -98,7 +99,8 @@ fun ActivityCard(
 
                     imageVector = Icons.Default.ArrowForwardIos,
                     contentDescription = null,
-                    modifier = Modifier.size(22.dp),
+                    modifier = Modifier.size(22.dp).alpha(0.5f).padding(end=6.dp),
+
 
                     )
             }

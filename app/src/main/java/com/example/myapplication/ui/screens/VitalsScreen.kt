@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.layout.size
@@ -121,9 +122,9 @@ fun VitalsScreen(
                 HorizontalCalendar {}
                 Row(modifier = Modifier.padding(16.dp),
                     verticalAlignment = Alignment.CenterVertically){
-                    Column (modifier = Modifier.weight(2F)){
+                    Column (modifier = Modifier.weight(1F) ){
                         Text(
-                            text = "Track Your Medications",
+                            text = "Track Your Vital Signs",
                             style = MaterialTheme.typography.headlineSmall,
                             textAlign = TextAlign.Start,
                             fontWeight = FontWeight.Black,
@@ -136,23 +137,21 @@ fun VitalsScreen(
                             modifier = Modifier.padding(horizontal = 6.dp)
                         )
                         Button(
-                            onClick = { showBottomSheet = true },
-                            modifier = Modifier.height(42.dp).padding(top = 8.dp),
+                            onClick = { navController.navigate("heart_rate_monitor") },
+                            modifier = Modifier.height(44.dp).padding(top = 10.dp),
                             colors = ButtonDefaults.buttonColors(
                                 containerColor = MaterialTheme.colorScheme.primary,
                                 contentColor = Color.White
                             )
                         ) {
-                            Text(text = "Add Reminder"
-
-                            )
+                            Text(text = "Check heart rate")
                         }
                     }
-                    Column(modifier = Modifier.weight(1.5f)) {
+                    Column(modifier = Modifier.weight(1f) ) {
                         Image(
-                            painter = painterResource(id = R.drawable.remedy_rafiki),
+                            painter = painterResource(id = R.drawable.circulatory_system_rafiki),
                             contentDescription = "medication",
-                            modifier = Modifier.size(160.dp)
+                            modifier = Modifier.size(140.dp).requiredSize(280.dp).offset(20.dp)
                         )
                     }
                 }

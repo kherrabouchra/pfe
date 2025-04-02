@@ -62,7 +62,7 @@ fun StepsProgressArc(
                 size = Size(size.width, size.height * 2f),
                 topLeft = Offset(0f, 0f),
 
-            )
+                )
 
             // Draw tick marks
             val tickCount = 30

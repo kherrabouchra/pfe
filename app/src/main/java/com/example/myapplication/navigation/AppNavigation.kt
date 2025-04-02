@@ -29,6 +29,8 @@ sealed class Screen(val route: String) {
     object Vitals : Screen("vitals")
     object Sleep : Screen("sleep")
     object StepCounter : Screen("stepcounter")
+    object Questionnaire : Screen("questionnaire")
+    object Water : Screen("water")
 }
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -76,8 +78,19 @@ fun AppNavigation(
 
         composable(Screen.Signup.route) {
             SignupScreen(
-                onSignup = {  },
+                onSignup = { navController.navigate(Screen.Questionnaire.route) },
                 onLoginClick = { navController.navigate(Screen.Login.route) }
+            )
+        }
+        
+        composable(Screen.Questionnaire.route) {
+            QuestionnaireScreen(
+                navController = navController,
+                onComplete = {
+                    navController.navigate(Screen.Dashboard.route) {
+                        popUpTo(Screen.Questionnaire.route) { inclusive = true }
+                    }
+                }
             )
         }
 
@@ -136,8 +149,19 @@ fun AppNavigation(
             SleepScreen(navController)
         }
         
-        composable(Screen.StepCounter.route) {
-            StepCounterScreen(navController)
+        composable(Screen.Water.route) {
+            WaterScreen(navController)
+        }
+        
+
+
+        composable("heart_rate_monitor") {
+            HeartRateMonitorScreen(
+                navController = navController,
+                onMeasurementComplete = { heartRate ->
+                    navController.navigateUp()
+                }
+            )
         }
 
         // Only include FallDetectionScreen if fallDetectionViewModel is provided

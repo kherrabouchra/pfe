@@ -30,5 +30,4 @@ object NetworkClient {
         .addConverterFactory(GsonConverterFactory.create())
         .build()
 
-    val deepSickService: DeepSickService = retrofit.create(DeepSickService::class.java)
 } 

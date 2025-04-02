@@ -49,7 +49,7 @@ fun SignupScreen(onSignup: () -> Unit, onLoginClick: () -> Unit) {
         Spacer(modifier = Modifier.height(120.dp))
         Column{
             OutlinedButton(
-                onClick = onSignup,
+                onClick = onSignup, // This will navigate to the Questionnaire screen
                 modifier = Modifier.fillMaxWidth().height(50.dp),
                 colors = ButtonDefaults.outlinedButtonColors(contentColor = Color.Black)
             ) {

@@ -54,7 +54,7 @@ fun HealthMetricCard(
 
                 Text(
                     text = title,
-                    style = MaterialTheme.typography.headlineSmall,
+                    style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold,
 
                     )

@@ -94,11 +94,13 @@ class FallDetectionViewModel(application: Application) : AndroidViewModel(applic
     }
     
     private fun triggerEmergencyAction() {
-        // TODO: Implement emergency actions like calling emergency contacts
+        // The SMS is already sent by the FallDetectionService when the fall is detected
+        // We just need to update the UI to show that emergency contacts have been notified
         viewModelScope.launch {
-            // This would be where you'd implement emergency contact notifications
-            // For now, we'll just update the UI
-            _fallAlertText.value = "Emergency services would be notified here"
+            _fallAlertText.value = "Emergency contacts have been notified"
+            // Clear the message after 5 seconds
+            kotlinx.coroutines.delay(5000)
+            _fallAlertText.value = ""
         }
     }
     

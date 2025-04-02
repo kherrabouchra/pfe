@@ -40,7 +40,7 @@ import java.util.Calendar
 fun AddMedicationBottomSheet(
     onDismiss: () -> Unit
 ) {
-    var medicationName by remember { mutableStateOf("Acetaminophen") }
+    var medicationName by remember { mutableStateOf("") }
     var selectedMedicineType by remember { mutableIntStateOf(0) } // 0: Pill, 1: Capsule, 2: Syringe, 3: Drops
     var quantity by remember { mutableIntStateOf(1) }
     var timeSchedule by remember { mutableStateOf("08.00 AM") }
@@ -58,11 +58,11 @@ fun AddMedicationBottomSheet(
     var is24Hour by remember { mutableStateOf(false) }
     
     val primaryColor = MaterialTheme.colorScheme.primary
-    
-    Box(modifier = Modifier.fillMaxWidth()) {
+
+    Box(modifier = Modifier.fillMaxWidth().background(Color.White)) {
         Column(
             modifier = Modifier
-                .fillMaxWidth().background(color = Color.White)
+                .fillMaxWidth()
                 .padding(24.dp)
                 .verticalScroll(rememberScrollState())
         ) {
@@ -78,10 +78,7 @@ fun AddMedicationBottomSheet(
                     fontWeight = FontWeight.Bold
                 )
                 
-                IconButton(onClick = { onDismiss() }) {
-                    Icon(Icons.Default.Close, contentDescription = "Close")
-                }
-    
+
 
             }
     
@@ -99,7 +96,7 @@ fun AddMedicationBottomSheet(
             Spacer(modifier = Modifier.height(8.dp))
             
             TextField(
-                value = "",
+                value = medicationName,
                 onValueChange = { medicationName = it },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -515,9 +512,10 @@ fun AddMedicationBottomSheet(
 
             
             Spacer(modifier = Modifier.height(32.dp))
+
             Button(
                 onClick = {},
-                modifier = Modifier.padding(top = 8.dp).fillMaxWidth(),
+                modifier = Modifier.padding(top = 8.dp).fillMaxWidth().height(48.dp),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color.Black,
                     contentColor = Color.White
@@ -532,7 +530,7 @@ fun AddMedicationBottomSheet(
             Spacer(modifier = Modifier.height(32.dp))
 
         }
-    
+
 
     }
     

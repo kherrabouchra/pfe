@@ -161,12 +161,8 @@ private fun DateItem(
     Column(
         modifier = Modifier
             .clip(RoundedCornerShape(38.dp))
-            .border(
-                3.dp,
-                if (isSelected) MaterialTheme.colorScheme.primary
-                else Color.Transparent
-            ).background(
-                if (isSelected) MaterialTheme.colorScheme.primary
+            .background(
+                if (isSelected) MaterialTheme.colorScheme.primary.copy(alpha = 0.8f)
                 else Color.Transparent
             )
             .clickable { onDateSelected(date) }
