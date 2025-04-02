@@ -1,0 +1,169 @@
+{
+    "users": {
+        "{userId}": {
+            "fullName": "John Doe",
+            "dateOfBirth": "YYYY-MM-DD",
+            "gender": "Male | Female | Other | null",
+            "height_cm": 175,
+            "weight_kg": 70,
+            "disabilities": [
+                "Hearing Impairment"
+            ],
+            "chronicConditions": [
+                "Diabetes"
+            ],
+            "fallRisk": true,
+            "smartwatchConnected": true,
+            "caregiver": {
+                "hasCaregiver": true,
+                "caregiverNotificationsEnabled": true,
+                "emergencyContact": {
+                    "name": "Jane Doe",
+                    "phone": "+1234567890"
+                }
+            },
+            "appUsageMode": "short_term | long_term",
+            "adlTrackingPreferences": [
+                "sleep",
+                "nutrition",
+                "hydration",
+                "medication",
+                "mobility",
+                "vitals",
+                "mood"
+            ],
+            "adlAbility_Katz": {
+                "bathing": "independent | needs_help | fully_assisted",
+                "dressing": "independent | needs_help | fully_assisted",
+                "toileting": "independent | needs_help | fully_assisted",
+                "transferring": "independent | needs_help | fully_assisted",
+                "eating": "independent | needs_help | fully_assisted",
+                "medication_management": "independent | needs_reminders | fully_assisted"
+            },
+            "sleep": {
+                "bedtime": "HH:MM",
+                "wakeTime": "HH:MM",
+                "sleepDifficulty": true
+            },
+            "nutrition": {
+                "specialDiet": "none | diabetic | low_sodium | other",
+                "mealFrequency": "often | sometimes | rarely",
+                "preferredMealTimes": {
+                    "breakfast": "HH:MM",
+                    "lunch": "HH:MM",
+                    "dinner": "HH:MM"
+                }
+            },
+            "hydration": {
+                "dailyGoal": 2000,
+                "cupSize": 250,
+                "waterIntakeRecords": [
+                    {
+                        "timestamp": "YYYY-MM-DD HH:MM:SS",
+                        "amount": 250
+                    }
+                ],
+                "totalIntake": 1500,
+                "selfReportedHydrationLevel": "often | sometimes | rarely"
+            },
+            "mentalHealth": {
+                "typicalMood": "calm | anxious | low_energy | high_energy | other",
+                "socialIsolation": true,
+                "wantsMotivationalPrompts": true
+            },
+            "voiceCommands": {
+                "enabled": true,
+                "customCommands": [
+                    "Take my vitals",
+                    "Remind me to drink water"
+                ]
+            }
+        }
+    },
+    "dailyActivityLogs": {
+        "{userId}": {
+            "{YYYY-MM-DD}": {
+                "sleep": {
+                    "actualSleepStart": "HH:MM",
+                    "actualSleepEnd": "HH:MM",
+                    "inactivityDetected": true
+                },
+                "nutrition": {
+                    "breakfastTaken": true,
+                    "lunchTaken": true,
+                    "dinnerTaken": true
+                },
+                "hydration": {
+                    "waterIntakeCount": 6
+                },
+                "medication": {
+                    "remindersSent": 3,
+                    "dosesTaken": 2
+                },
+                "mobility": {
+                    "steps": 4500,
+                    "fallDetected": false
+                },
+                "vitals": {
+                    "bloodPressure": "120/80",
+                    "heartRate": 72,
+                    "glucoseLevel": 95,
+                    "temperature": 36.8
+                },
+                "symptoms": [
+                    "Fatigue",
+                    "Mild Headache"
+                ],
+                "mood": "calm"
+            }
+        }
+    },
+    "caregiverAlerts": {
+        "{userId}": {
+            "{alertId}": {
+                "timestamp": "YYYY-MM-DD HH:MM:SS",
+                "alertType": "fall_detected | missed_medication | abnormal_vitals",
+                "status": "pending | acknowledged | resolved",
+                "details": "User fell in the living room at 14:30.",
+                "caregiverNotified": true
+            }
+        }
+    },
+    "chatbotHistory": {
+        "{userId}": {
+            "{messageId}": {
+                "timestamp": "YYYY-MM-DD HH:MM:SS",
+                "userMessage": "Remind me to take my pills at 8 PM.",
+                "botResponse": "Okay! I'll remind you at 8 PM.",
+                "actionTriggered": "medication_reminder_set"
+            }
+        }
+    },
+    "voiceCommandsLogs": {
+        "{userId}": {
+            "{commandId}": {
+                "timestamp": "YYYY-MM-DD HH:MM:SS",
+                "command": "Check my vitals",
+                "response": "Your heart rate is 72 BPM, and your blood pressure is 120/80.",
+                "actionPerformed": "vitals_check"
+            }
+        }
+    },
+    "emergencyEvents": {
+        "{userId}": {
+            "{eventId}": {
+                "timestamp": "YYYY-MM-DD HH:MM:SS",
+                "type": "FALL | VOICE_COMMAND | MANUAL",
+                "location": {
+                    "latitude": 37.4219999,
+                    "longitude": -122.0840575,
+                    "accuracy": 10.0
+                },
+                "responded": true,
+                "responseTime": "YYYY-MM-DD HH:MM:SS",
+                "smsDelivered": true,
+                "emergencyContactsNotified": ["contactId1", "contactId2"]
+            }
+        }
+    }
+}

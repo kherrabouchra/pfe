@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "1016313396900",
+    "firebase_url": "https://better-2fbc2-default-rtdb.firebaseio.com",
+    "project_id": "better-2fbc2",
+    "storage_bucket": "better-2fbc2.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1016313396900:android:c3e1c033f28fde4d697031",
+        "android_client_info": {
+          "package_name": "com.example.myapplication"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1016313396900-r9ddhjcp7krj8niingc6nh5uvst0qsvv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD4C5tJzilxBan4nbqqTp2aOIg_5fpLMRc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1016313396900-r9ddhjcp7krj8niingc6nh5uvst0qsvv.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

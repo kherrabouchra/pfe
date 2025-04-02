@@ -1,0 +1,25 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="80dp"
+    android:height="80dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+  <!-- Cup outline -->
+  <path
+      android:fillColor="#FFFFFF"
+      android:strokeWidth="1"
+      android:strokeColor="#CCCCCC"
+      android:pathData="M6,4L18,4C18.5,4 19,4.5 19,5L17,20C17,21 16,22 15,22L9,22C8,22 7,21 7,20L5,5C5,4.5 5.5,4 6,4Z" />
+  
+  <!-- Cup rim -->
+  <path
+      android:fillColor="#00000000"
+      android:strokeWidth="1"
+      android:strokeColor="#AAAAAA"
+      android:pathData="M5,6L19,6" />
+  
+  <!-- Water content -->
+  <path
+      android:fillColor="@color/primary"
+      android:fillAlpha="0.8"
+      android:pathData="M6.5,7L17.5,7L16,20C16,20.5 15.5,21 15,21L9,21C8.5,21 8,20.5 8,20L6.5,7Z" />
+</vector>
