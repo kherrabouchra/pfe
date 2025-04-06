@@ -243,7 +243,12 @@ fun DashboardScreen(
                             unit = " ",
                             subtitle = "Last 30 days",
                             icon = 0,
-                            modifier = Modifier.weight(1f)
+                            modifier = Modifier.weight(1f),
+                            onClick = {
+                                navController.navigate(Screen.Vitals.route) {
+                                    popUpTo(Screen.Dashboard.route) { inclusive = false }
+                                }
+                            }
                         )
                         HealthMetricCard(
                             title = "Symptoms",
@@ -251,7 +256,12 @@ fun DashboardScreen(
                             unit = " ",
                             subtitle = "Latest\n ",
                             icon = 0,
-                            modifier = Modifier.weight(1f)
+                            modifier = Modifier.weight(1f),
+                            onClick = {
+                                navController.navigate(Screen.Symptoms.route) {
+                                    popUpTo(Screen.Dashboard.route) { inclusive = false }
+                                }
+                            }
                         )
                     }
                     Spacer(modifier = Modifier.height(16.dp))
@@ -366,8 +376,12 @@ fun DashboardScreen(
                     ) {
                         StepsCard(
                             steps = 2601,
-                            goal = 5000
-                        )
+                            goal = 5000,
+                            onClick = {
+                                navController.navigate(Screen.StepCounter.route) {
+                                    popUpTo(Screen.Dashboard.route) { inclusive = false }
+                                }
+                            })
                     }
                     Row(
                         modifier = Modifier
@@ -381,7 +395,12 @@ fun DashboardScreen(
                             unit = "BPM",
                             subtitle = "Latest",
                             icon = R.drawable.ic_heart,
-                            modifier = Modifier.weight(1f)
+                            modifier = Modifier.weight(1f),
+                            onClick = {
+                                navController.navigate("heart_rate_monitor") {
+                                    popUpTo(Screen.Dashboard.route) { inclusive = false }
+                                }
+                            }
                         )
                         HealthMetricCard(
                             title = "HRV",
@@ -389,7 +408,12 @@ fun DashboardScreen(
                             unit = "MS",
                             subtitle = "Latest",
                             icon = R.drawable.ic_hrv,
-                            modifier = Modifier.weight(1f)
+                            modifier = Modifier.weight(1f),
+                            onClick = {
+                                navController.navigate(Screen.Vitals.route) {
+                                    popUpTo(Screen.Dashboard.route) { inclusive = false }
+                                }
+                            }
                         )
                     }
 
@@ -406,7 +430,12 @@ fun DashboardScreen(
                             unit = "mL",
                             subtitle = "Latest",
                             icon = R.drawable.ic_water,
-                            modifier = Modifier.weight(1f)
+                            modifier = Modifier.weight(1f),
+                            onClick = {
+                                navController.navigate(Screen.Water.route) {
+                                    popUpTo(Screen.Dashboard.route) { inclusive = false }
+                                }
+                            }
                         )
                         HealthMetricCard(
                             title = "Sleep",
@@ -414,7 +443,12 @@ fun DashboardScreen(
                             unit = "MS",
                             subtitle = "Latest",
                             icon = R.drawable.sleep,
-                            modifier = Modifier.weight(1f)
+                            modifier = Modifier.weight(1f),
+                            onClick = {
+                                navController.navigate(Screen.Sleep.route) {
+                                    popUpTo(Screen.Dashboard.route) { inclusive = false }
+                                }
+                            }
                         )
                     }
 
@@ -423,9 +457,15 @@ fun DashboardScreen(
                             .fillMaxWidth()
                             .padding(vertical = 12.dp)
                     ) {
-                        WaterIntakeCard(currentIntake = waterIntake,
+                        WaterIntakeCard(
+                            currentIntake = waterIntake,
                             targetIntake = 2500,
-                            onIntakeChange = { waterIntake = it } )
+                            onIntakeChange = { waterIntake = it },
+                            onClick = {
+                                navController.navigate(Screen.Water.route) {
+                                    popUpTo(Screen.Dashboard.route) { inclusive = false }
+                                }
+                            })
                     }
 
 
@@ -569,12 +609,22 @@ fun DashboardScreen(
                     }
                     RecommendationCard(
                         title = "Try a 5-min walk to boost mood!",
-                        subtitle = "Your last three mood logs were neutral."
+                        subtitle = "Your last three mood logs were neutral.",
+                        onClick = {
+                            navController.navigate(Screen.Activities.route) {
+                                popUpTo(Screen.Dashboard.route) { inclusive = false }
+                            }
+                        }
                     )
                     Spacer(modifier = Modifier.height(12.dp))
                     RecommendationCard(
                         title = "Would you like to record vitals?",
-                        subtitle = "You've missed recording vitals for 2 days."
+                        subtitle = "You've missed recording vitals for 2 days.",
+                        onClick = {
+                            navController.navigate(Screen.Vitals.route) {
+                                popUpTo(Screen.Dashboard.route) { inclusive = false }
+                            }
+                        }
                     )
                     Spacer(modifier = Modifier.height(98.dp))
                 }

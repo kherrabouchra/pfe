@@ -31,6 +31,7 @@ sealed class Screen(val route: String) {
     object StepCounter : Screen("stepcounter")
     object Questionnaire : Screen("questionnaire")
     object Water : Screen("water")
+    object Symptoms : Screen("symptoms")
 }
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -153,7 +154,9 @@ fun AppNavigation(
             WaterScreen(navController)
         }
         
-
+        composable(Screen.Symptoms.route) {
+            SymptomsScreen(navController)
+        }
 
         composable("heart_rate_monitor") {
             HeartRateMonitorScreen(

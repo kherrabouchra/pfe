@@ -25,10 +25,11 @@ import androidx.compose.ui.tooling.preview.Preview
 fun StepsCard(
     steps: Int,
     goal: Int,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit = {}
 ) {
     Card(
-        modifier = modifier.clickable { },
+        modifier = modifier.clickable { onClick() },
         colors = CardDefaults.cardColors(
             containerColor = Color.White
         ), elevation = CardDefaults.cardElevation(
@@ -102,4 +103,4 @@ fun StepsCardPreview() {
         steps = 3500,
         goal = 5000
     )
-} 
+}

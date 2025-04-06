@@ -1,29 +1,27 @@
 package com.example.myapplication.ui.screens
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.example.myapplication.R
 import com.example.myapplication.ui.components.BetterButton
 import com.example.myapplication.ui.components.SelectButton
 
@@ -34,7 +32,7 @@ fun QuestionnaireScreen(
     onComplete: () -> Unit = {}
 ) {
     var currentQuestion by remember { mutableStateOf(0) }
-    val totalQuestions = 10 // Total number of questions
+    val totalQuestions = 12 // Total number of questions (added smartwatch and caregiver pages)
     
     // Personal Information
     var fullName by remember { mutableStateOf("") }
@@ -69,11 +67,12 @@ fun QuestionnaireScreen(
     var chronicConditionsDetails by remember { mutableStateOf("") }
     var fallRisk by remember { mutableStateOf<Boolean?>(null) }
     val healthDevices = remember { mutableStateListOf<String>() }
+    var bloodType by remember { mutableStateOf("") }
+    var allergies by remember { mutableStateOf("") }
     
     // Mental & Emotional Well-being
     var moodState by remember { mutableStateOf("") }
     var isSociallyIsolated by remember { mutableStateOf<Boolean?>(null) }
-    var wantsMotivationalPrompts by remember { mutableStateOf<Boolean?>(null) }
     
     // Caregiver & Emergency Contacts
     var hasCaregiver by remember { mutableStateOf<Boolean?>(null) }
@@ -196,15 +195,34 @@ fun QuestionnaireScreen(
                     onHealthDevicesChange = { device, isSelected ->
                         if (isSelected) healthDevices.add(device)
                         else healthDevices.remove(device)
-                    }
+                    },
+                    bloodType = bloodType,
+                    onBloodTypeChange = { bloodType = it },
+                    allergies = allergies,
+                    onAllergiesChange = { allergies = it }
                 )
                 9 -> MentalEmotionalWellbeingQuestion(
                     moodState = moodState,
                     onMoodStateChange = { moodState = it },
                     isSociallyIsolated = isSociallyIsolated,
-                    onIsSociallyIsolatedChange = { isSociallyIsolated = it },
-                    wantsMotivationalPrompts = wantsMotivationalPrompts,
-                    onWantsMotivationalPromptsChange = { wantsMotivationalPrompts = it }
+                    onIsSociallyIsolatedChange = { isSociallyIsolated = it }
+                )
+                10 -> SmartWatchConnectionQuestion(
+                    healthDevices = healthDevices,
+                    onHealthDevicesChange = { device, isSelected ->
+                        if (isSelected) healthDevices.add(device)
+                        else healthDevices.remove(device)
+                    }
+                )
+                11 -> CaregiverEmergencyContactsQuestion(
+                    hasCaregiver = hasCaregiver,
+                    onHasCaregiverChange = { hasCaregiver = it },
+                    emergencyContactName = emergencyContactName,
+                    onEmergencyContactNameChange = { emergencyContactName = it },
+                    emergencyContactPhone = emergencyContactPhone,
+                    onEmergencyContactPhoneChange = { emergencyContactPhone = it },
+                    enableCaregiverNotifications = enableCaregiverNotifications,
+                    onEnableCaregiverNotificationsChange = { enableCaregiverNotifications = it }
                 )
             }}
             
@@ -852,7 +870,11 @@ fun HealthConditionsQuestion(
     fallRisk: Boolean?,
     onFallRiskChange: (Boolean) -> Unit,
     healthDevices: List<String>,
-    onHealthDevicesChange: (String, Boolean) -> Unit
+    onHealthDevicesChange: (String, Boolean) -> Unit,
+    bloodType: String,
+    onBloodTypeChange: (String) -> Unit,
+    allergies: String,
+    onAllergiesChange: (String) -> Unit
 ) {
     Column {
         Text(
@@ -891,6 +913,25 @@ fun HealthConditionsQuestion(
         
         Spacer(modifier = Modifier.height(16.dp))
         
+        Text("Blood Type", style = MaterialTheme.typography.bodyLarge)
+        Row(modifier = Modifier.padding(vertical = 8.dp)) {
+            listOf("A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-").forEach { type ->
+                ADLStatusOption(type, bloodType == type) { onBloodTypeChange(type) }
+                Spacer(modifier = Modifier.width(8.dp))
+            }
+        }
+        
+        Spacer(modifier = Modifier.height(16.dp))
+        
+        OutlinedTextField(
+            value = allergies,
+            onValueChange = onAllergiesChange,
+            label = { Text("Allergies (if any)") },
+            modifier = Modifier.fillMaxWidth()
+        )
+        
+        Spacer(modifier = Modifier.height(16.dp))
+        
         Text("Do you use any of the following devices?", style = MaterialTheme.typography.bodyLarge)
         Column(modifier = Modifier.padding(vertical = 8.dp)) {
             listOf("Smartwatch", "Blood Pressure Monitor", "Glucose Monitor", "Other").forEach { device ->
@@ -910,9 +951,7 @@ fun MentalEmotionalWellbeingQuestion(
     moodState: String,
     onMoodStateChange: (String) -> Unit,
     isSociallyIsolated: Boolean?,
-    onIsSociallyIsolatedChange: (Boolean) -> Unit,
-    wantsMotivationalPrompts: Boolean?,
-    onWantsMotivationalPromptsChange: (Boolean) -> Unit
+    onIsSociallyIsolatedChange: (Boolean) -> Unit
 ) {
     Column {
         Text(
@@ -939,14 +978,130 @@ fun MentalEmotionalWellbeingQuestion(
             Spacer(modifier = Modifier.width(8.dp))
             YesNoOption("No", isSociallyIsolated == false) { onIsSociallyIsolatedChange(false) }
         }
+    }
+}
+
+@Composable
+fun SmartWatchConnectionQuestion(
+    healthDevices: List<String>,
+    onHealthDevicesChange: (String, Boolean) -> Unit
+) {
+    Column {
+        Text(
+            text = "⌚ Smartwatch Connection",
+            style = MaterialTheme.typography.headlineMedium,
+            fontWeight = FontWeight.Bold
+        )
+        
+
+        
+        Spacer(modifier = Modifier.height(8.dp))
+        
+        Text(
+            "Connect a smartwatch to enhance health monitoring",
+            style = MaterialTheme.typography.bodyMedium,
+            color = Color.Gray
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        Image(
+            modifier = Modifier.width(180.dp),
+            painter = painterResource(id = R.drawable.epilepsy_rafiki),
+            contentDescription = "Fall detection illustration",
+            alignment = Alignment.Center
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        
+        Text("Do you have any of these smartwatch devices?", style = MaterialTheme.typography.bodyLarge)
+        Column(modifier = Modifier.padding(vertical = 8.dp)) {
+            listOf("Apple Watch", "Samsung Galaxy Watch", "Fitbit", "Garmin", "Other").forEach { device ->
+                CheckboxOption(
+                    text = device,
+                    isSelected = healthDevices.contains(device),
+                    onToggle = { onHealthDevicesChange(device, !healthDevices.contains(device)) }
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+            }
+        }
         
         Spacer(modifier = Modifier.height(16.dp))
         
-        Text("Would you like motivational prompts from the app?", style = MaterialTheme.typography.bodyLarge)
+        Text(
+            "If you don't have a smartwatch yet, you can still use the app and connect one later.",
+            style = MaterialTheme.typography.bodyMedium,
+            color = Color.Gray
+        )
+    }
+}
+
+@Composable
+fun CaregiverEmergencyContactsQuestion(
+    hasCaregiver: Boolean?,
+    onHasCaregiverChange: (Boolean) -> Unit,
+    emergencyContactName: String,
+    onEmergencyContactNameChange: (String) -> Unit,
+    emergencyContactPhone: String,
+    onEmergencyContactPhoneChange: (String) -> Unit,
+    enableCaregiverNotifications: Boolean?,
+    onEnableCaregiverNotificationsChange: (Boolean) -> Unit
+) {
+    Column {
+        Text(
+            text = "👨‍⚕️ Caregiver & Emergency Contacts",
+            style = MaterialTheme.typography.headlineMedium,
+            fontWeight = FontWeight.Bold
+        )
+        
+        Spacer(modifier = Modifier.height(16.dp))
+        
+        Text("Do you have a caregiver?", style = MaterialTheme.typography.bodyLarge)
         Row(modifier = Modifier.padding(vertical = 8.dp)) {
-            YesNoOption("Yes", wantsMotivationalPrompts == true) { onWantsMotivationalPromptsChange(true) }
+            YesNoOption("Yes", hasCaregiver == true) { onHasCaregiverChange(true) }
             Spacer(modifier = Modifier.width(8.dp))
-            YesNoOption("No", wantsMotivationalPrompts == false) { onWantsMotivationalPromptsChange(false) }
+            YesNoOption("No", hasCaregiver == false) { onHasCaregiverChange(false) }
+        }
+        
+        Spacer(modifier = Modifier.height(16.dp))
+        
+        Text("Emergency Contact Information", style = MaterialTheme.typography.bodyLarge)
+        Text(
+            "This person will be contacted in case of emergency",
+            style = MaterialTheme.typography.bodySmall,
+            color = Color.Gray
+        )
+        
+        Spacer(modifier = Modifier.height(8.dp))
+        
+        OutlinedTextField(
+            value = emergencyContactName,
+            onValueChange = onEmergencyContactNameChange,
+            label = { Text("Emergency Contact Name") },
+            modifier = Modifier.fillMaxWidth()
+        )
+        
+        Spacer(modifier = Modifier.height(8.dp))
+        
+        OutlinedTextField(
+            value = emergencyContactPhone,
+            onValueChange = onEmergencyContactPhoneChange,
+            label = { Text("Emergency Contact Phone") },
+            modifier = Modifier.fillMaxWidth()
+        )
+        
+        if (hasCaregiver == true) {
+            Spacer(modifier = Modifier.height(16.dp))
+            
+            Text("Enable caregiver notifications?", style = MaterialTheme.typography.bodyLarge)
+            Text(
+                "Allow your caregiver to receive alerts about your health status",
+                style = MaterialTheme.typography.bodySmall,
+                color = Color.Gray
+            )
+            
+            Row(modifier = Modifier.padding(vertical = 8.dp)) {
+                YesNoOption("Yes", enableCaregiverNotifications == true) { onEnableCaregiverNotificationsChange(true) }
+                Spacer(modifier = Modifier.width(8.dp))
+                YesNoOption("No", enableCaregiverNotifications == false) { onEnableCaregiverNotificationsChange(false) }
+            }
         }
     }
 }

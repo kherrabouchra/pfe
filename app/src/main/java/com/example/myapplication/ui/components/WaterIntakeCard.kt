@@ -3,6 +3,7 @@ package com.example.myapplication.ui.components
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -40,7 +41,8 @@ fun WaterIntakeCard(
     modifier: Modifier = Modifier,
     currentIntake: Int = 0,
     targetIntake: Int = 2500,
-    onIntakeChange: (Int) -> Unit = {}
+    onIntakeChange: (Int) -> Unit = {},
+    onClick: () -> Unit = {}
 ) {
     val waterColor = MaterialTheme.colorScheme.primary // Light blue color for water
     val progress = currentIntake.toFloat() / targetIntake.toFloat()
@@ -48,7 +50,8 @@ fun WaterIntakeCard(
     
     Card(
         modifier = modifier
-            .fillMaxWidth() ,
+            .fillMaxWidth()
+            .clickable { onClick() },
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White),
         border = BorderStroke(0.3.dp, Color.LightGray)

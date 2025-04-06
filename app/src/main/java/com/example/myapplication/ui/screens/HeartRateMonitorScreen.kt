@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.ImageFormat
+import android.hardware.camera2.CameraCharacteristics
 import android.hardware.camera2.CameraManager
 import android.media.Image
 import android.os.Build
@@ -121,14 +122,30 @@ fun HeartRateMonitorScreen(
 
         redValues.add(avgRed)
 
-        // Update progress
-        measurementProgress = (redValues.size / 300f).coerceIn(0f, 1f)
+        // Update progress - reduced to 150 frames (5 seconds at 30fps)
+        measurementProgress = (redValues.size / 150f).coerceIn(0f, 1f)
 
-        if (redValues.size >= 300) { // 10 seconds of data at 30fps
+        // Ensure flash stays on during measurement
+        if (isFlashlightOn) {
+            try {
+                // Instead of getTorchMode (which doesn't exist), check if flash is available and ensure it's on
+                val cameraId = cameraManager.cameraIdList[0]
+                val characteristics = cameraManager.getCameraCharacteristics(cameraId)
+                val flashAvailable = characteristics.get(CameraCharacteristics.FLASH_INFO_AVAILABLE) ?: false
+                
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && flashAvailable) {
+                    cameraManager.setTorchMode(cameraId, true)
+                }
+            } catch (e: Exception) {
+                Log.e("HeartRateMonitor", "Error maintaining flash: ${e.message}")
+            }
+        }
+
+        if (redValues.size >= 150) { // 5 seconds of data at 30fps
             isProcessing = true
             // Calculate heart rate using peak detection
             val peaks = detectPeaks(redValues)
-            val timeBetweenPeaks = 10f / peaks.size // 10 seconds divided by number of peaks
+            val timeBetweenPeaks = 5f / peaks.size // 5 seconds divided by number of peaks
             currentHeartRate = (60f / timeBetweenPeaks).roundToInt()
 
             // Measurement complete
@@ -196,9 +213,30 @@ fun HeartRateMonitorScreen(
                                     preview,
                                     imageAnalyzer
                                 )
-                                // Turn on flashlight
+                                // Turn on flashlight and ensure it stays on
                                 cameraManager.setTorchMode(cameraManager.cameraIdList[0], true)
                                 isFlashlightOn = true
+                                
+                                // Start a coroutine to periodically check flash status
+                                scope.launch {
+                                    while (isFlashlightOn) {
+                                        try {
+                                            // Check if flash is available and ensure it's on
+                                            val cameraId = cameraManager.cameraIdList[0]
+                                            val characteristics = cameraManager.getCameraCharacteristics(cameraId)
+                                            val flashAvailable = characteristics.get(CameraCharacteristics.FLASH_INFO_AVAILABLE) ?: false
+                                            
+                                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && flashAvailable) {
+                                                // We can't check the current torch state directly, so we'll just set it to on periodically
+                                                cameraManager.setTorchMode(cameraId, true)
+                                                Log.d("HeartRateMonitor", "Flash reactivated")
+                                            }
+                                        } catch (e: Exception) {
+                                            Log.e("HeartRateMonitor", "Error checking flash: ${e.message}")
+                                        }
+                                        delay(500) // Check every 500ms
+                                    }
+                                }
                             } catch (e: Exception) {
                                 e.printStackTrace()
                             }

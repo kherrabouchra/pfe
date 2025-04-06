@@ -50,8 +50,8 @@ class HeartRateViewModel : ViewModel() {
     private val _progress = MutableStateFlow(0)
     val progress: StateFlow<Int> = _progress.asStateFlow()
     
-    // Measurement duration in milliseconds (30 seconds)
-    private val measurementDuration = 30000L
+    // Measurement duration in milliseconds (15 seconds)
+    private val measurementDuration = 15000L
     
     // Start heart rate measurement
     fun startMeasurement() {

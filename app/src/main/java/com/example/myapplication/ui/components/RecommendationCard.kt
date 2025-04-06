@@ -1,6 +1,7 @@
 package com.example.myapplication.ui.components
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -17,10 +18,13 @@ import androidx.compose.ui.tooling.preview.Preview
 @Composable
 fun RecommendationCard(
     title: String,
-    subtitle: String
+    subtitle: String,
+    onClick: () -> Unit = {}
 ) {
     Card(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onClick() },
         colors = CardDefaults.cardColors(
             containerColor = Color.White
         ),
@@ -64,4 +68,4 @@ fun RecommendationCardPreview() {
         title = "Daily Exercise",
         subtitle = "30 minutes of moderate activity"
     )
-} 
+}

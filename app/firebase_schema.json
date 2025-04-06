@@ -6,6 +6,11 @@
             "gender": "Male | Female | Other | null",
             "height_cm": 175,
             "weight_kg": 70,
+            "bloodType": "A+ | A- | B+ | B- | AB+ | AB- | O+ | O-",
+            "allergies": [
+                "Peanuts",
+                "Penicillin"
+            ],
             "disabilities": [
                 "Hearing Impairment"
             ],
@@ -70,13 +75,6 @@
                 "typicalMood": "calm | anxious | low_energy | high_energy | other",
                 "socialIsolation": true,
                 "wantsMotivationalPrompts": true
-            },
-            "voiceCommands": {
-                "enabled": true,
-                "customCommands": [
-                    "Take my vitals",
-                    "Remind me to drink water"
-                ]
             }
         }
     },
@@ -139,13 +137,13 @@
             }
         }
     },
-    "voiceCommandsLogs": {
+    "aiGeneratedRecommendations": {
         "{userId}": {
-            "{commandId}": {
+            "{recommendationId}": {
                 "timestamp": "YYYY-MM-DD HH:MM:SS",
-                "command": "Check my vitals",
-                "response": "Your heart rate is 72 BPM, and your blood pressure is 120/80.",
-                "actionPerformed": "vitals_check"
+                "category": "nutrition | sleep | hydration | exercise | mental_health",
+                "recommendation": "Drink a glass of water every hour to stay hydrated.",
+                "personalized": true
             }
         }
     },
@@ -153,7 +151,7 @@
         "{userId}": {
             "{eventId}": {
                 "timestamp": "YYYY-MM-DD HH:MM:SS",
-                "type": "FALL | VOICE_COMMAND | MANUAL",
+                "type": "FALL | MANUAL",
                 "location": {
                     "latitude": 37.4219999,
                     "longitude": -122.0840575,

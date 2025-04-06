@@ -123,4 +123,4 @@ dependencies {
     implementation(libs.generativeai)
     implementation 'com.google.guava:guava:31.1-android'
 }
-apply plugin: 'com.google.gms.google-services'
+// Plugin is already applied at the top of the file

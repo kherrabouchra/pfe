@@ -25,13 +25,14 @@ fun HealthMetricCard(
     unit: String,
     subtitle: String,
     @DrawableRes icon: Int,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit = {}
 ) {
     Card(
         elevation = CardDefaults.cardElevation(
             defaultElevation = 2.dp
         ),
-        modifier = modifier.clickable {   },
+        modifier = modifier.clickable { onClick() },
         colors = CardDefaults.cardColors(
             containerColor = Color.White
         ),  border = BorderStroke(0.3.dp, Color.LightGray)
@@ -105,4 +106,4 @@ fun HealthMetricCardPreview() {
         subtitle = "Latest",
         icon = R.drawable.ic_ecg
     )
-} 
+}
