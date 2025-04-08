@@ -159,9 +159,9 @@ fun AppNavigation(
         }
 
         composable("heart_rate_monitor") {
-            HeartRateMonitorScreen(
+            com.example.myapplication.ui.screens.HeartRateMonitorScreen(
                 navController = navController,
-                onMeasurementComplete = { heartRate ->
+                onMeasurementComplete = { heartRate: Int ->
                     navController.navigateUp()
                 }
             )

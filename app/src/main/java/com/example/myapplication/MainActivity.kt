@@ -23,7 +23,6 @@ class MainActivity : ComponentActivity() {
     private val fallDetectionViewModel: FallDetectionViewModel by viewModels()
 
     private val REQUEST_CODE_NOTIFICATION_PERMISSION = 1001
-    private val REQUEST_CODE_AUDIO_PERMISSION = 1002
     private val REQUEST_CODE_CALL_PHONE_PERMISSION = 1003
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -39,15 +38,6 @@ class MainActivity : ComponentActivity() {
                 // Request the permission
                 ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.POST_NOTIFICATIONS), REQUEST_CODE_NOTIFICATION_PERMISSION)
             }
-        }
-        
-        // Check and request audio recording permission
-        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
-            // Request the permission
-            ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.RECORD_AUDIO), REQUEST_CODE_AUDIO_PERMISSION)
-        } else {
-            // Permission already granted, start voice command service
-            startVoiceCommandService()
         }
         
         // Check and request call phone permission for emergency calls
@@ -106,16 +96,6 @@ class MainActivity : ComponentActivity() {
                     Toast.makeText(this, "Notification Permission Denied", Toast.LENGTH_SHORT).show()
                 }
             }
-            REQUEST_CODE_AUDIO_PERMISSION -> {
-                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    // Permission granted, start voice command service
-                    Toast.makeText(this, "Audio Recording Permission Granted", Toast.LENGTH_SHORT).show()
-                    startVoiceCommandService()
-                } else {
-                    // Permission denied, notify the user
-                    Toast.makeText(this, "Audio Recording Permission Denied - Voice Commands Disabled", Toast.LENGTH_SHORT).show()
-                }
-            }
             REQUEST_CODE_CALL_PHONE_PERMISSION -> {
                 if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     // Permission granted for emergency calls
@@ -128,11 +108,7 @@ class MainActivity : ComponentActivity() {
         }
     }
     
-    // Helper method to start voice command service
-    private fun startVoiceCommandService() {
-        val voiceCommandIntent = Intent(this, com.example.myapplication.service.VoiceCommandService::class.java)
-        startService(voiceCommandIntent)
-    }
+
     
     companion object {
         // Firebase connection test

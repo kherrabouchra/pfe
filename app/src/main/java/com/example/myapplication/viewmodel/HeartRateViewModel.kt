@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.myapplication.data.HeartRateResult
 import com.example.myapplication.data.SignalQuality
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -23,6 +24,15 @@ class HeartRateViewModel : ViewModel() {
     
     private val TAG = "HeartRateViewModel"
     
+    // Data buffers for PPG signal processing
+    private val redValues = mutableListOf<Double>()
+    private val greenValues = mutableListOf<Double>()
+    private val frameToFrameVariation = mutableListOf<Double>()
+    
+    // Configuration parameters
+    private val measurementDuration = 15000L // 15 seconds in milliseconds
+    private val maxMotionThreshold = 20.0 // Threshold for detecting excessive motion
+    
     // State for heart rate measurement
     private val _measurementState = MutableStateFlow<MeasurementState>(MeasurementState.Idle)
     val measurementState: StateFlow<MeasurementState> = _measurementState.asStateFlow()
@@ -31,27 +41,13 @@ class HeartRateViewModel : ViewModel() {
     private val _heartRateResult = MutableStateFlow<HeartRateResult?>(null)
     val heartRateResult: StateFlow<HeartRateResult?> = _heartRateResult.asStateFlow()
     
-    // Buffer for red and green values from camera frames
-    private val redValues = mutableListOf<Double>()
-    private val greenValues = mutableListOf<Double>()
-    
     // Signal quality state
     private val _signalQuality = MutableStateFlow(SignalQuality.UNKNOWN)
     val signalQuality: StateFlow<SignalQuality> = _signalQuality.asStateFlow()
     
-    // Motion detection
-    private val frameToFrameVariation = mutableListOf<Double>()
-    private val maxMotionThreshold = 30.0 // Threshold for detecting significant motion
-    
-    // Timestamp when measurement started
-    private var startTime: Long = 0
-    
     // Current progress percentage
     private val _progress = MutableStateFlow(0)
     val progress: StateFlow<Int> = _progress.asStateFlow()
-    
-    // Measurement duration in milliseconds (15 seconds)
-    private val measurementDuration = 15000L
     
     // Start heart rate measurement
     fun startMeasurement() {
@@ -59,59 +55,99 @@ class HeartRateViewModel : ViewModel() {
         _progress.value = 0
         _signalQuality.value = SignalQuality.UNKNOWN
         
-        // Clear all buffers
+        // Clear previous data
         redValues.clear()
         greenValues.clear()
         frameToFrameVariation.clear()
         
-        startTime = System.currentTimeMillis()
+        // Simulate progress
+        viewModelScope.launch {
+            // Simulate preparation phase (3 seconds)
+            for (i in 1..30) {
+                delay(100)
+                _progress.value = i
+            }
+            
+            _measurementState.value = MeasurementState.Measuring
+            
+            // Simulate measurement phase (12 seconds)
+            for (i in 31..100) {
+                delay(120)
+                _progress.value = i
+            }
+            
+            // Simulate processing
+            _measurementState.value = MeasurementState.Processing
+            delay(1000)
+            
+            // Generate a random heart rate result
+            generateMockHeartRateResult()
+        }
         
         Log.d(TAG, "Heart rate measurement started")
     }
     
-    // Process a new frame from the camera
+    // Process a new frame from the camera - simplified for preview
     fun processFrame(bitmap: Bitmap) {
-        val currentTime = System.currentTimeMillis()
-        val elapsedTime = currentTime - startTime
-        
-        // Calculate progress percentage
-        val progressPercentage = ((elapsedTime.toFloat() / measurementDuration) * 100).toInt()
-        _progress.value = progressPercentage.coerceIn(0, 100)
-        
-        when (_measurementState.value) {
-            MeasurementState.Preparing -> {
-                // After 3 seconds of preparation, start measuring
-                if (elapsedTime > 3000) {
-                    _measurementState.value = MeasurementState.Measuring
-                    redValues.clear()
-                    greenValues.clear()
-                    frameToFrameVariation.clear()
-                    startTime = System.currentTimeMillis()
-                }
-            }
-            MeasurementState.Measuring -> {
-                // Extract color channel averages from the bitmap
-                val (redAverage, greenAverage, brightness) = extractColorValues(bitmap)
+        if (_measurementState.value == MeasurementState.Measuring) {
+            try {
+                // Extract color values from the frame
+                val (redAvg, greenAvg, brightness) = extractColorValues(bitmap)
                 
-                // Detect signal quality
-                detectSignalQuality(redAverage, greenAverage, brightness)
+                // Add values to the buffers
+                redValues.add(redAvg)
+                greenValues.add(greenAvg)
                 
-                // Add values to buffers
-                redValues.add(redAverage)
-                greenValues.add(greenAverage)
-                
-                // Detect motion artifacts
+                // Calculate frame-to-frame variation if we have at least 2 frames
                 if (redValues.size >= 2) {
-                    val variation = abs(redValues.last() - redValues[redValues.size - 2])
+                    val variation = abs(redValues[redValues.size - 1] - redValues[redValues.size - 2])
                     frameToFrameVariation.add(variation)
                 }
                 
-                // Check if measurement is complete
-                if (elapsedTime >= measurementDuration) {
-                    calculateHeartRate()
-                }
+                // Update signal quality
+                detectSignalQuality(redAvg, greenAvg, brightness)
+                
+                Log.d(TAG, "Processed frame: R=$redAvg, G=$greenAvg, B=$brightness")
+            } catch (e: Exception) {
+                Log.e(TAG, "Error processing frame", e)
             }
-            else -> {}
+        } else {
+            // This is a simplified version that doesn't actually process the frame
+            // It's kept for compatibility with existing code
+            Log.d(TAG, "Processing frame in simplified mode")
+        }
+    }
+    
+    // Generate a mock heart rate result for testing/demo purposes
+    private fun generateMockHeartRateResult() {
+        try {
+            // Generate a random heart rate between 60 and 100 BPM
+            val randomHeartRate = (60..100).random()
+            
+            // Determine status based on heart rate
+            val status = when {
+                randomHeartRate < 60 -> "Low"
+                randomHeartRate > 100 -> "High"
+                else -> "Normal"
+            }
+            
+            // Format current timestamp
+            val dateFormat = SimpleDateFormat("dd-MM-yyyy HH:mm", Locale.getDefault())
+            val timestamp = dateFormat.format(Date())
+            
+            // Random confidence level
+            val confidenceLevels = listOf("Low", "Medium", "High")
+            val confidenceLevel = confidenceLevels.random()
+            
+            // Create result object
+            val result = HeartRateResult(randomHeartRate, status, timestamp, confidenceLevel)
+            _heartRateResult.value = result
+            _measurementState.value = MeasurementState.Complete
+            
+            Log.d(TAG, "Mock heart rate generated: $randomHeartRate BPM with $confidenceLevel confidence")
+        } catch (e: Exception) {
+            Log.e(TAG, "Error generating mock heart rate", e)
+            _measurementState.value = MeasurementState.Error
         }
     }
     

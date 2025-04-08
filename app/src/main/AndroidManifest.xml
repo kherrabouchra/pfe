@@ -63,12 +63,5 @@
             android:enabled="true"
             android:exported="false"
             android:foregroundServiceType="location" />
-            
-        <!-- Voice command detection service -->
-        <service
-            android:name=".service.VoiceCommandService"
-            android:enabled="true"
-            android:exported="false"
-            android:foregroundServiceType="microphone" />
 </application>
 </manifest>
