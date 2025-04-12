@@ -59,7 +59,7 @@ fun SymptomsScreen(
     navController: NavController
 ) {
     var showBottomSheet by remember { mutableStateOf(false) }
-    var currentRoute by remember { mutableStateOf("symptoms") }
+    var currentRoute by remember { mutableStateOf("activities") }
     var selectedDate by remember { mutableStateOf(LocalDate.now()) }
 
     Scaffold(
@@ -107,7 +107,7 @@ fun SymptomsScreen(
                 }
 
                 Text(
-                    text = "Symptoms Tracker",
+                    text = "Symptoms",
                     style = MaterialTheme.typography.headlineSmall,
                     textAlign = TextAlign.Center,
                     fontWeight = FontWeight.Bold,
@@ -155,9 +155,9 @@ fun SymptomsScreen(
                     }
                     Column(modifier = Modifier.weight(1f) ) {
                         Image(
-                            painter = painterResource(id = R.drawable.circulatory_system_rafiki),
+                            painter = painterResource(id = R.drawable.thermometer_rafiki),
                             contentDescription = "symptoms",
-                            modifier = Modifier.size(140.dp).requiredSize(280.dp).offset(20.dp)
+                            modifier = Modifier.size(140.dp).requiredSize(240.dp).offset(20.dp)
                         )
                     }
                 }

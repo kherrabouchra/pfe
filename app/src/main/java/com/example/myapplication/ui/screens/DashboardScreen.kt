@@ -27,6 +27,7 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Checkbox
@@ -81,6 +82,7 @@ import com.example.myapplication.ui.components.StepsCard
 import com.example.myapplication.viewmodel.MainViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.NavOptionsBuilder
 import androidx.test.espresso.base.Default
 import com.example.chat.AIChatScreen
 import com.example.myapplication.navigation.Screen
@@ -107,7 +109,7 @@ fun DashboardScreen(
             floatingActionButton = {
                 val context = LocalContext.current
                 FloatingActionButton(
-                    modifier = Modifier.padding(bottom = 2.dp),
+                    modifier = Modifier.padding(bottom = 2.dp).clip(RoundedCornerShape(46.dp)).background(Color.Black),
                     onClick = { makeEmergencyCall(context) },
                     containerColor = MaterialTheme.colorScheme.primary
                 ) {

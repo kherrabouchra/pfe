@@ -32,6 +32,7 @@ sealed class Screen(val route: String) {
     object Questionnaire : Screen("questionnaire")
     object Water : Screen("water")
     object Symptoms : Screen("symptoms")
+    object Nutrition : Screen("nutrition")
 }
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -157,12 +158,18 @@ fun AppNavigation(
         composable(Screen.Symptoms.route) {
             SymptomsScreen(navController)
         }
+        
+        composable(Screen.Nutrition.route) {
+            NutritionScreen(navController)
+        }
 
         composable("heart_rate_monitor") {
             com.example.myapplication.ui.screens.HeartRateMonitorScreen(
                 navController = navController,
                 onMeasurementComplete = { heartRate: Int ->
-                    navController.navigateUp()
+                    // Don't automatically navigate back - let user click back button
+                    // Store the heart rate value in the MainViewModel for display in VitalsScreen
+                    mainViewModel.setLastHeartRate(heartRate)
                 }
             )
         }

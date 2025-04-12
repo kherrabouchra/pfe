@@ -1,5 +1,6 @@
 package com.example.myapplication.ui.screens
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -24,6 +25,51 @@ import androidx.navigation.compose.rememberNavController
 import com.example.myapplication.R
 import com.example.myapplication.ui.components.BetterButton
 import com.example.myapplication.ui.components.SelectButton
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.filled.Schedule
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.input.OffsetMapping
+import androidx.compose.ui.text.input.TransformedText
+import androidx.compose.ui.text.input.VisualTransformation
+import java.util.Calendar
+
+class DateVisualTransformation : VisualTransformation {
+    override fun filter(text: AnnotatedString): TransformedText {
+        val trimmed = text.text.take(8)
+        val formatted = buildString {
+            for (i in trimmed.indices) {
+                append(trimmed[i])
+                if (i == 1 || i == 3) append('/')
+            }
+        }
+        val offsetMapping = object : OffsetMapping {
+            override fun originalToTransformed(offset: Int): Int {
+                return when {
+                    offset <= 1 -> offset
+                    offset <= 3 -> offset + 1
+                    offset <= 8 -> offset + 2
+                    else -> 10
+                }
+            }
+
+            override fun transformedToOriginal(offset: Int): Int {
+                return when {
+                    offset <= 2 -> offset
+                    offset <= 5 -> offset - 1
+                    offset <= 10 -> offset - 2
+                    else -> 8
+                }
+            }
+        }
+        return TransformedText(AnnotatedString(formatted), offsetMapping)
+    }
+}
+fun filterDateInput(input: String): String {
+    return input.filter { it.isDigit() }.take(8)
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -293,10 +339,18 @@ fun PersonalInfoQuestion(
 
         OutlinedTextField(
             value = dateOfBirth,
-            onValueChange = onDateOfBirthChange,
+            onValueChange = { newInput ->
+                onDateOfBirthChange(filterDateInput(newInput))
+            },
             label = { Text("Date of Birth (DD/MM/YYYY)") },
-            modifier = Modifier.fillMaxWidth(),
-         )
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Number,
+                imeAction = ImeAction.Done
+            ),
+            visualTransformation = DateVisualTransformation(),
+            modifier = Modifier.fillMaxWidth()
+        )
+
         Text(
             "Used to calculate age for vitals interpretation, sleep needs, and reminders",
             style = MaterialTheme.typography.bodySmall,
@@ -356,23 +410,32 @@ fun PhysicalInfoQuestion(
         )
         
         Spacer(modifier = Modifier.height(16.dp))
-        
+
         OutlinedTextField(
             value = height,
-            onValueChange = onHeightChange,
+            onValueChange = { newInput ->
+                onHeightChange(newInput.filter { it.isDigit() }) // Digits only
+            },
             label = { Text("Height (cm)") },
+            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
             modifier = Modifier.fillMaxWidth()
         )
-        
+
         Spacer(modifier = Modifier.height(16.dp))
-        
+
         OutlinedTextField(
             value = weight,
-            onValueChange = onWeightChange,
+            onValueChange = { newInput ->
+                onWeightChange(newInput.filter { it.isDigit() }) // Digits only
+            },
             label = { Text("Weight (kg)") },
+            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
             modifier = Modifier.fillMaxWidth(),
-            supportingText = { Text("Used for BMI, mobility assessment, and health monitoring") }
+            supportingText = {
+                Text("Used for BMI, mobility assessment, and health monitoring")
+            }
         )
+
     }
 }
 
@@ -585,6 +648,43 @@ fun CheckboxOption(
         }
     }
 }
+@Composable
+fun TimeInputField(
+    label: String,
+    time: String,
+    onTimeChange: (String) -> Unit
+) {
+    val context = LocalContext.current
+    val timeParts = time.split(":").mapNotNull { it.toIntOrNull() }
+    val initialHour = timeParts.getOrNull(0) ?: 22
+    val initialMinute = timeParts.getOrNull(1) ?: 0
+
+    OutlinedTextField(
+        value = time,
+        onValueChange = {},
+        label = { Text(label) },
+        readOnly = true,
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable {
+                android.app.TimePickerDialog(
+                    context,
+                    { _, hour: Int, minute: Int ->
+                        val formattedTime = String.format("%02d:%02d", hour, minute)
+                        onTimeChange(formattedTime)
+                    },
+                    initialHour,
+                    initialMinute,
+                    true
+                ).show()
+            },
+        colors = OutlinedTextFieldDefaults.colors(
+            focusedBorderColor = MaterialTheme.colorScheme.primary,
+            focusedLabelColor = MaterialTheme.colorScheme.primary,
+            cursorColor = MaterialTheme.colorScheme.primary
+        )
+    )
+}
 
 @Composable
 fun PhysicalMobilityStatusQuestion(
@@ -785,23 +885,20 @@ fun SleepRestPatternsQuestion(
         )
         
         Spacer(modifier = Modifier.height(16.dp))
-        
-        OutlinedTextField(
-            value = bedtime,
-            onValueChange = onBedtimeChange,
-            label = { Text("Usual bedtime") },
-            modifier = Modifier.fillMaxWidth()
+        TimeInputField(
+            label = "Usual bedtime",
+            time = bedtime,
+            onTimeChange = onBedtimeChange
         )
-        
+
         Spacer(modifier = Modifier.height(16.dp))
-        
-        OutlinedTextField(
-            value = wakeupTime,
-            onValueChange = onWakeupTimeChange,
-            label = { Text("Usual wake-up time") },
-            modifier = Modifier.fillMaxWidth()
+
+        TimeInputField(
+            label = "Usual wake-up time",
+            time = wakeupTime,
+            onTimeChange = onWakeupTimeChange
         )
-        
+
         Spacer(modifier = Modifier.height(16.dp))
         
         Text("Do you experience sleep difficulty?", style = MaterialTheme.typography.bodyLarge)
@@ -1046,25 +1143,16 @@ fun CaregiverEmergencyContactsQuestion(
 ) {
     Column {
         Text(
-            text = "👨‍⚕️ Caregiver & Emergency Contacts",
+            text = "👨‍⚕️ Emergency Contacts",
             style = MaterialTheme.typography.headlineMedium,
             fontWeight = FontWeight.Bold
         )
         
+
         Spacer(modifier = Modifier.height(16.dp))
         
-        Text("Do you have a caregiver?", style = MaterialTheme.typography.bodyLarge)
-        Row(modifier = Modifier.padding(vertical = 8.dp)) {
-            YesNoOption("Yes", hasCaregiver == true) { onHasCaregiverChange(true) }
-            Spacer(modifier = Modifier.width(8.dp))
-            YesNoOption("No", hasCaregiver == false) { onHasCaregiverChange(false) }
-        }
-        
-        Spacer(modifier = Modifier.height(16.dp))
-        
-        Text("Emergency Contact Information", style = MaterialTheme.typography.bodyLarge)
-        Text(
-            "This person will be contacted in case of emergency",
+         Text(
+            "Enter your emergency contact's informations. This person will be contacted in case of emergency",
             style = MaterialTheme.typography.bodySmall,
             color = Color.Gray
         )
@@ -1074,16 +1162,21 @@ fun CaregiverEmergencyContactsQuestion(
         OutlinedTextField(
             value = emergencyContactName,
             onValueChange = onEmergencyContactNameChange,
-            label = { Text("Emergency Contact Name") },
+            label = { Text("Name") },
             modifier = Modifier.fillMaxWidth()
         )
         
         Spacer(modifier = Modifier.height(8.dp))
-        
+
+
         OutlinedTextField(
             value = emergencyContactPhone,
             onValueChange = onEmergencyContactPhoneChange,
-            label = { Text("Emergency Contact Phone") },
+            label = { Text("Phone") },
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Phone,
+                imeAction = ImeAction.Done
+            ),
             modifier = Modifier.fillMaxWidth()
         )
         

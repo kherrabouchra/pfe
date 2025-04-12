@@ -6,6 +6,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -14,10 +15,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.FabPosition
@@ -30,6 +34,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -43,24 +48,28 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.myapplication.R
 import com.example.myapplication.ui.components.BottomNavigationBar
 import com.example.myapplication.ui.components.DismissibleCard
+import com.example.myapplication.ui.components.HealthMetricCard
 import com.example.myapplication.ui.components.HorizontalCalendar
 import com.example.myapplication.ui.components.NotificationCard
+import com.example.myapplication.viewmodel.MainViewModel
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun VitalsScreen(
-
-    navController: NavController
-
-
+    navController: NavController,
+    mainViewModel: MainViewModel = viewModel()
 ) {
     var showBottomSheet by remember { mutableStateOf(false) }
     var currentRoute by remember { mutableStateOf("activities") }
+    
+    // Collect the last heart rate measurement from the ViewModel
+    val lastHeartRate by mainViewModel.lastHeartRate.collectAsState()
 
 
     Scaffold(
@@ -88,7 +97,11 @@ fun VitalsScreen(
         }
     ) { padding ->
 
-        Column {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+        ) {
             Row(
                 modifier = Modifier.padding(12.dp),
                 verticalAlignment = Alignment.CenterVertically
@@ -114,8 +127,6 @@ fun VitalsScreen(
                     .padding(bottom = 14.dp)
                     .fillMaxWidth().align(Alignment.CenterHorizontally)
             )
-
-
 
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
 
@@ -155,12 +166,37 @@ fun VitalsScreen(
                         )
                     }
                 }
-               /* DismissibleCard(
-                    navController = navController,
-                    title = "Track Your Vitals",
-                    description = "Set reminders and track your medication intake all in one place.",
-                    imageRes = R.drawable.circulatory_system_rafiki
-                )*/
+                
+                // Display heart rate card if measurement exists
+                if (lastHeartRate != null) {
+                    Spacer(modifier = Modifier.height(16.dp))
+                    
+                    HealthMetricCard(
+                        title = "Heart Rate",
+                        value = lastHeartRate!!.heartRate.toString(),
+                        unit = "BPM",
+                        subtitle = "Last measured: ${lastHeartRate!!.timestamp}",
+                        icon = R.drawable.ic_heart, // Using heart icon for heart rate
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp),
+                        onClick = { navController.navigate("heart_rate_monitor") }
+                    )
+                    
+                    Spacer(modifier = Modifier.height(8.dp))
+                    
+                    Text(
+                        text = "Status: ${lastHeartRate!!.status}",
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = when(lastHeartRate!!.status) {
+                            "Normal" -> Color.Green
+                            "High" -> Color.Red
+                            "Low" -> Color(0xFFFFA000) // Amber
+                            else -> MaterialTheme.colorScheme.onSurface
+                        },
+                        modifier = Modifier.padding(horizontal = 16.dp)
+                    )
+                }
             }
         }
 

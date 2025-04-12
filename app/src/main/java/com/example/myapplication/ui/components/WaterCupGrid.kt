@@ -29,6 +29,11 @@ fun WaterCupGrid(
 ) {
     var selectedCup by remember { mutableStateOf(currentIntake / cupSize) }
     val waterColor = MaterialTheme.colorScheme.primary
+    
+    // Calculate number of cups based on goal
+    val totalCups = (dailyGoal / cupSize)
+    val rows = (totalCups + 3) / 4 // Ceiling division to determine number of rows
+    val lastRowCups = if (totalCups % 4 == 0) 4 else totalCups % 4
 
     Column(
         modifier = modifier
@@ -56,15 +61,17 @@ fun WaterCupGrid(
        }
 
         Column (horizontalAlignment = Alignment.CenterHorizontally){
-        // Create 2 rows with 4 cups each
-        for (row in 0..2) {
+        // Create rows based on calculated number of cups
+        for (row in 0 until rows) {
             Row(
                 modifier = Modifier.fillMaxWidth()
                     .padding(vertical = 8.dp),
-                horizontalArrangement =  Arrangement.Center
+                horizontalArrangement = Arrangement.Center
             ) {
-                // Create 4 cups per row
-                for (col in 0 until if (row < 2) 4 else 2) {
+                // Create cups per row (4 per row except possibly the last row)
+                val cupsInThisRow = if (row == rows - 1 && lastRowCups != 0) lastRowCups else 4
+                
+                for (col in 0 until cupsInThisRow) {
                     val cupIndex = row * 4 + col
                     val isFilled = cupIndex < selectedCup
 
