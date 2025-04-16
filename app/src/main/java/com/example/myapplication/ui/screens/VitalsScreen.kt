@@ -24,6 +24,8 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
@@ -55,21 +57,23 @@ import com.example.myapplication.R
 import com.example.myapplication.ui.components.BottomNavigationBar
 import com.example.myapplication.ui.components.DismissibleCard
 import com.example.myapplication.ui.components.HealthMetricCard
+import com.example.myapplication.ui.components.HeartRateGraph
 import com.example.myapplication.ui.components.HorizontalCalendar
 import com.example.myapplication.ui.components.NotificationCard
-import com.example.myapplication.viewmodel.MainViewModel
+import com.example.myapplication.viewmodel.VitalsViewModel
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun VitalsScreen(
     navController: NavController,
-    mainViewModel: MainViewModel = viewModel()
+    vitalsViewModel: VitalsViewModel = viewModel()
 ) {
     var showBottomSheet by remember { mutableStateOf(false) }
     var currentRoute by remember { mutableStateOf("activities") }
-    
+
     // Collect the last heart rate measurement from the ViewModel
-    val lastHeartRate by mainViewModel.lastHeartRate.collectAsState()
+    val lastHeartRate by vitalsViewModel.lastHeartRate.collectAsState()
+    val heartRateHistory by vitalsViewModel.heartRateHistory.collectAsState()
 
 
     Scaffold(
@@ -100,6 +104,7 @@ fun VitalsScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
+                .padding(padding)
                 .verticalScroll(rememberScrollState())
         ) {
             Row(
@@ -131,9 +136,11 @@ fun VitalsScreen(
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
 
                 HorizontalCalendar {}
-                Row(modifier = Modifier.padding(16.dp),
-                    verticalAlignment = Alignment.CenterVertically){
-                    Column (modifier = Modifier.weight(1F) ){
+                Row(
+                    modifier = Modifier.padding(16.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Column(modifier = Modifier.weight(1F)) {
                         Text(
                             text = "Track Your Vital Signs",
                             style = MaterialTheme.typography.headlineSmall,
@@ -158,7 +165,7 @@ fun VitalsScreen(
                             Text(text = "Check heart rate")
                         }
                     }
-                    Column(modifier = Modifier.weight(1f) ) {
+                    Column(modifier = Modifier.weight(1f)) {
                         Image(
                             painter = painterResource(id = R.drawable.circulatory_system_rafiki),
                             contentDescription = "medication",
@@ -166,29 +173,29 @@ fun VitalsScreen(
                         )
                     }
                 }
-                
-                // Display heart rate card if measurement exists
+
+                // Always display heart rate section
+                Spacer(modifier = Modifier.height(16.dp))
+
+                HealthMetricCard(
+                    title = "Heart Rate",
+                    value = lastHeartRate?.heartRate?.toString() ?: "--",
+                    unit = "BPM",
+                    subtitle = lastHeartRate?.let { "Last measured: ${it.timestamp}" } ?: "No recent measurements",
+                    icon = R.drawable.ic_heart,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp),
+                    onClick = { navController.navigate("heart_rate_monitor") }
+                )
+
+                Spacer(modifier = Modifier.height(8.dp))
+
                 if (lastHeartRate != null) {
-                    Spacer(modifier = Modifier.height(16.dp))
-                    
-                    HealthMetricCard(
-                        title = "Heart Rate",
-                        value = lastHeartRate!!.heartRate.toString(),
-                        unit = "BPM",
-                        subtitle = "Last measured: ${lastHeartRate!!.timestamp}",
-                        icon = R.drawable.ic_heart, // Using heart icon for heart rate
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 16.dp),
-                        onClick = { navController.navigate("heart_rate_monitor") }
-                    )
-                    
-                    Spacer(modifier = Modifier.height(8.dp))
-                    
                     Text(
                         text = "Status: ${lastHeartRate!!.status}",
                         style = MaterialTheme.typography.bodyLarge,
-                        color = when(lastHeartRate!!.status) {
+                        color = when (lastHeartRate!!.status) {
                             "Normal" -> Color.Green
                             "High" -> Color.Red
                             "Low" -> Color(0xFFFFA000) // Amber
@@ -197,15 +204,60 @@ fun VitalsScreen(
                         modifier = Modifier.padding(horizontal = 16.dp)
                     )
                 }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // Heart Rate Graph
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+                    colors = CardDefaults.cardColors(containerColor = Color.White)
+                ) {
+                    Column(modifier = Modifier.padding(16.dp)) {
+                        Text(
+                            text = "Heart Rate History",
+                            style = MaterialTheme.typography.titleLarge,
+                            fontWeight = FontWeight.Bold
+                        )
+                        
+                        Spacer(modifier = Modifier.height(8.dp))
+                        
+                        if (heartRateHistory.isNotEmpty()) {
+                            HeartRateGraph(
+                                heartRateData = heartRateHistory,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(200.dp),
+                                lineColor = MaterialTheme.colorScheme.primary,
+                                backgroundColor = Color.White
+                            )
+                            
+                            // Add a legend or explanation
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Text(
+                                text = "Your heart rate measurements over time",
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+                            )
+                        } else {
+                            Text(
+                                text = "No heart rate data available. Take a measurement to see your history.",
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier.padding(vertical = 32.dp).fillMaxWidth()
+                            )
+                        }
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(80.dp)) // Add bottom padding for FAB
             }
         }
-
     }
-    }
-
-
-
-
+}
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Preview

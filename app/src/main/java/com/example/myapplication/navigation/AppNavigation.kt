@@ -9,9 +9,13 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.NavType
+import androidx.navigation.navArgument
 import com.example.chat.AIChatScreen
+import com.example.myapplication.data.HeartRateResult
 import com.example.myapplication.ui.screens.*
 import com.example.myapplication.viewmodel.*
+import java.time.LocalDateTime
 
 sealed class Screen(val route: String) {
     object Splash : Screen("splash")
@@ -164,13 +168,33 @@ fun AppNavigation(
         }
 
         composable("heart_rate_monitor") {
-            com.example.myapplication.ui.screens.HeartRateMonitorScreen(
+            val vitalsViewModel: VitalsViewModel = viewModel()
+            HeartRateMonitorScreen(
                 navController = navController,
                 onMeasurementComplete = { heartRate: Int ->
-                    // Don't automatically navigate back - let user click back button
-                    // Store the heart rate value in the MainViewModel for display in VitalsScreen
-                    mainViewModel.setLastHeartRate(heartRate)
+                    vitalsViewModel.setLastHeartRate(heartRate)
+                    navController.navigate("heart_rate_result/$heartRate")
                 }
+            )
+        }
+        
+        composable(
+            route = "heart_rate_result/{heartRate}",
+            arguments = listOf(navArgument("heartRate") { type = NavType.IntType })
+        ) { backStackEntry ->
+            val heartRate = backStackEntry.arguments?.getInt("heartRate") ?: 0
+            HeartRateResultScreen(
+                navController = navController,
+                heartRateResult = HeartRateResult(
+                    heartRate = heartRate,
+                    status = when {
+                        heartRate < 60 -> "Low"
+                        heartRate > 100 -> "High"
+                        else -> "Normal"
+                    },
+                    timestamp = LocalDateTime.now().toString(),
+                    confidenceLevel = "Medium"
+                )
             )
         }
 

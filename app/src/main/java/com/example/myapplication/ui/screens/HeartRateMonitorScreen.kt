@@ -1,23 +1,28 @@
 package com.example.myapplication.ui.screens
 
 import android.Manifest
-import android.content.Context
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.*
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -29,28 +34,24 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview as ComposePreview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
-import com.example.myapplication.ui.components.PpgWaveformGraph
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
-import com.example.myapplication.R
-import com.example.myapplication.data.HeartRateResult
+import com.example.myapplication.data.MeasurementState
 import com.example.myapplication.data.SignalQuality
+import com.example.myapplication.ui.components.PpgWaveformGraph
 import com.example.myapplication.utils.HeartRateImageAnalyzer
 import com.example.myapplication.viewmodel.HeartRateViewModel
-import com.example.myapplication.viewmodel.MeasurementState
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import java.util.concurrent.Executors
-
-@OptIn(ExperimentalPermissionsApi::class)
+ 
 @RequiresApi(Build.VERSION_CODES.O)
+@OptIn(ExperimentalPermissionsApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun HeartRateMonitorScreen(
     navController: NavController,
@@ -67,26 +68,23 @@ fun HeartRateMonitorScreen(
     val progress by viewModel.progress.collectAsState()
     val signalQuality by viewModel.signalQuality.collectAsState()
     val isFingerDetected by viewModel.isFingerDetected.collectAsState()
+    val ppgSignalData by viewModel.ppgSignalData.collectAsState()
+    val lastPulseTimestamp by viewModel.lastPulseTimestamp.collectAsState()
+    val currentBpmEstimate by viewModel.currentBpmEstimate.collectAsState()
     
     // Context and lifecycle owner for camera
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
     
-    // Animation for the heart beat
-    val infiniteTransition = rememberInfiniteTransition(label = "heart_beat")
-    val scale by infiniteTransition.animateFloat(
-        initialValue = 1f,
-        targetValue = 1.2f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(500, easing = FastOutSlowInEasing),
-            repeatMode = RepeatMode.Reverse
-        ), label = "heart_scale"
-    )
+    // We don't need the pulsating animation anymore as we'll use the progress indicator instead
     
     // Effect to handle measurement completion
     LaunchedEffect(measurementState) {
         if (measurementState == MeasurementState.Complete && heartRateResult != null) {
-            onMeasurementComplete(heartRateResult!!.heartRate)
+            val heartRate = heartRateResult!!.heartRate
+            onMeasurementComplete(heartRate)
+            // Navigate to the result screen with heart rate parameter
+            navController.navigate("heart_rate_result/$heartRate")
         }
     }
     
@@ -100,371 +98,398 @@ fun HeartRateMonitorScreen(
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(12.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                IconButton(onClick = { navController.popBackStack() }) {
-                    Icon(
-                        Icons.Default.ArrowBack,
-                        contentDescription = "Go Back",
-                        modifier = Modifier.size(30.dp)
-                    )
-                }
-                
-                Text(
-                    text = "Heart Rate Monitor",
-                    style = MaterialTheme.typography.headlineSmall,
-                    fontWeight = FontWeight.Bold,
+            TopAppBar(
+                title = { Text("Heart Rate Monitor", fontWeight = FontWeight.Bold) },
+                navigationIcon = {
+                    IconButton(onClick = { navController.popBackStack() }) {
+                        Icon(Icons.Default.ArrowBack, contentDescription = "Go Back")
+                    }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                    titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer
                 )
-            }
-            HorizontalDivider()
+            )
         }
     ) { padding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
-                .padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+                .padding(16.dp)
+                .verticalScroll(rememberScrollState()),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Spacer(modifier = Modifier.height(16.dp))
+            // Status indicator
+            StatusIndicator(measurementState, signalQuality, isFingerDetected)
             
-            // Camera preview or heart icon based on measurement state
-            if (hasCameraPermission && measurementState == MeasurementState.Measuring) {
-                // Camera preview for measurement
-                Box(
+            Spacer(modifier = Modifier.height(24.dp))
+            
+            // Main measurement area
+            MeasurementDisplay(
+                measurementState = measurementState,
+                hasCameraPermission = hasCameraPermission,
+                isFingerDetected = isFingerDetected,
+                progress = progress,
+                currentBpmEstimate = currentBpmEstimate,
+                scale = 1f, // Fixed scale since we removed the pulsating animation
+                context = context,
+                lifecycleOwner = lifecycleOwner,
+                viewModel = viewModel
+            )
+            
+            Spacer(modifier = Modifier.height(24.dp))
+            
+            // PPG Waveform
+            if (measurementState == MeasurementState.Measuring && isFingerDetected) {
+                Card(
                     modifier = Modifier
-                        .size(200.dp)
-                        .clip(CircleShape)
-                        .background(Color.Black),
-                    contentAlignment = Alignment.Center
+                        .fillMaxWidth()
+                        .height(150.dp),
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
                 ) {
-                    // Camera preview
-                    AndroidView(
-                        factory = { context ->
-                            val previewView = PreviewView(context).apply {
-                                implementationMode = PreviewView.ImplementationMode.COMPATIBLE
-                                scaleType = PreviewView.ScaleType.FILL_CENTER
-                            }
-                            
-                            val cameraProviderFuture = ProcessCameraProvider.getInstance(context)
-                            cameraProviderFuture.addListener({
-                                val cameraProvider = cameraProviderFuture.get()
-                                
-                                // Set up the preview use case
-                                val preview = Preview.Builder().build().also {
-                                    it.setSurfaceProvider(previewView.surfaceProvider)
-                                }
-                                
-                                // Set up image analysis use case
-                                val imageAnalysis = ImageAnalysis.Builder()
-                                    .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
-                                    .build()
-                                    .also {
-                                        it.setAnalyzer(
-                                            Executors.newSingleThreadExecutor(),
-                                            HeartRateImageAnalyzer(viewModel)
-                                        )
-                                    }
-                                
-                                try {
-                                    // Unbind all use cases before rebinding
-                                    cameraProvider.unbindAll()
-                                    
-                                    // Select back camera and enable flash
-                                    val cameraSelector = CameraSelector.Builder()
-                                        .requireLensFacing(CameraSelector.LENS_FACING_BACK)
-                                        .build()
-                                    
-                                    // Bind use cases to camera
-                                    val camera = cameraProvider.bindToLifecycle(
-                                        lifecycleOwner,
-                                        cameraSelector,
-                                        preview,
-                                        imageAnalysis
-                                    )
-                                    
-                                    // Enable flash
-                                    camera.cameraControl.enableTorch(true)
-                                    
-                                } catch (e: Exception) {
-                                    Log.e("HeartRateMonitor", "Camera binding failed", e)
-                                }
-                            }, ContextCompat.getMainExecutor(context))
-                            
-                            previewView
-                        },
-                        modifier = Modifier.fillMaxSize()
-                    )
-                    
-                    // Overlay with instructions
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(Color.Black.copy(alpha = 0.3f)),
-                        contentAlignment = Alignment.Center
-                    ) {
+                    Column(modifier = Modifier.padding(12.dp)) {
                         Text(
-                            text = "Place your finger over the camera and flash",
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = Color.White,
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier.padding(16.dp)
+                            text = "Pulse Waveform",
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Medium
+                        )
+                        
+                        Spacer(modifier = Modifier.height(8.dp))
+                        
+                        PpgWaveformGraph(
+                            ppgData = ppgSignalData,
+                            lastPulseTimestamp = lastPulseTimestamp,
+                            isFingerDetected = isFingerDetected,
+                            modifier = Modifier.fillMaxSize(),
+                            lineColor = MaterialTheme.colorScheme.primary,
+                            backgroundColor = MaterialTheme.colorScheme.surfaceVariant
                         )
                     }
                 }
-            } else {
-                // Heart icon with animation when not measuring
-                Box(
-                    modifier = Modifier
-                        .size(150.dp)
-                        .clip(CircleShape)
-                        .background(MaterialTheme.colorScheme.primaryContainer),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Favorite,
-                        contentDescription = "Heart Rate",
-                        modifier = Modifier
-                            .size(80.dp)
-                            .scale(if (measurementState == MeasurementState.Measuring) scale else 1f),
-                        tint = MaterialTheme.colorScheme.primary
-                    )
-                }
-            }
-            
-            Spacer(modifier = Modifier.height(16.dp))
-            
-            // PPG Waveform Graph - shows real-time pulse animation
-            val ppgData by viewModel.ppgSignalData.collectAsState()
-            val lastPulseTimestamp by viewModel.lastPulseTimestamp.collectAsState()
-            
-            PpgWaveformGraph(
-                ppgData = ppgData,
-                lastPulseTimestamp = lastPulseTimestamp,
-                isFingerDetected = isFingerDetected,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(100.dp)
-                    .padding(horizontal = 16.dp),
-                lineColor = MaterialTheme.colorScheme.primary
-            )
-            
-            Spacer(modifier = Modifier.height(16.dp))
-            
-            // Heart rate display
-            Text(
-                text = if (heartRateResult != null) "${heartRateResult!!.heartRate}" else "--",
-                style = MaterialTheme.typography.displayLarge,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.primary
-            )
-            
-            Text(
-                text = "BPM",
-                style = MaterialTheme.typography.titleLarge,
-                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
-            )
-            
-            Spacer(modifier = Modifier.height(16.dp))
-            
-            // Status text (only show when measurement is complete)
-            if (measurementState == MeasurementState.Complete && heartRateResult != null) {
-                val statusColor = when (heartRateResult!!.status) {
-                    "Low" -> Color(0xFFFFA000) // Amber for low
-                    "High" -> Color.Red // Red for high
-                    else -> Color.Green // Green for normal
-                }
                 
-                val statusText = when (heartRateResult!!.status) {
-                    "Low" -> "Low Heart Rate"
-                    "High" -> "High Heart Rate"
-                    else -> "Normal Heart Rate"
-                }
-                
-                Text(
-                    text = statusText,
-                    style = MaterialTheme.typography.titleMedium,
-                    color = statusColor,
-                    fontWeight = FontWeight.Bold
-                )
-                
-                Spacer(modifier = Modifier.height(8.dp))
-                
-                Text(
-                    text = "Normal range: 60-100 BPM",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
-                )
-                
-                Spacer(modifier = Modifier.height(8.dp))
-                
-                Text(
-                    text = "Measured at: ${heartRateResult!!.timestamp}",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
-                )
-                
-                Spacer(modifier = Modifier.height(8.dp))
-                
-                Text(
-                    text = "Confidence: ${heartRateResult!!.confidenceLevel}",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
-                )
-            }
-            
-            // Signal quality indicator (only during measurement)
-            if (measurementState == MeasurementState.Measuring) {
                 Spacer(modifier = Modifier.height(16.dp))
-                
-                val signalQualityText = when (signalQuality) {
-                    SignalQuality.TOO_DARK -> "Too dark - please find better lighting"
-                    SignalQuality.TOO_BRIGHT -> "Too bright - reduce lighting"
-                    SignalQuality.POOR -> "Poor signal - adjust finger position"
-                    SignalQuality.GOOD -> "Good signal - keep still"
-                    else -> "Detecting signal..."
-                }
-                
-                val signalQualityColor = when (signalQuality) {
-                    SignalQuality.GOOD -> Color.Green
-                    SignalQuality.POOR -> Color(0xFFFFA000) // Amber
-                    SignalQuality.TOO_DARK, SignalQuality.TOO_BRIGHT -> Color.Red
-                    else -> MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
-                }
-                
-                Text(
-                    text = signalQualityText,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = signalQualityColor,
-                    fontWeight = FontWeight.Medium
-                )
-                
-                Spacer(modifier = Modifier.height(8.dp))
-                
-                Text(
-                    text = if (isFingerDetected) "Finger detected" else "No finger detected",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = if (isFingerDetected) Color.Green else Color.Red
-                )
             }
             
-            Spacer(modifier = Modifier.height(24.dp))
-            
-            // Progress indicator (only show during measurement)
-            if (measurementState == MeasurementState.Measuring || measurementState == MeasurementState.Preparing) {
-                LinearProgressIndicator(
-                    progress = { progress / 100f },
-                    modifier = Modifier
-                        .fillMaxWidth(0.8f)
-                        .height(8.dp)
-                        .clip(RoundedCornerShape(4.dp))
-                )
-                
-                Spacer(modifier = Modifier.height(8.dp))
-                
-                Text(
-                    text = when (measurementState) {
-                        MeasurementState.Preparing -> "Preparing camera..."
-                        MeasurementState.Measuring -> "Measuring... Please hold still"
-                        else -> ""
-                    },
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
-                )
-            }
-            
-            Spacer(modifier = Modifier.height(24.dp))
-            
-            // Start/Restart button
-            Button(
-                onClick = { 
-                    if (measurementState == MeasurementState.Idle || 
-                        measurementState == MeasurementState.Complete || 
-                        measurementState == MeasurementState.Error) {
-                        viewModel.startMeasurement()
-                    }
-                },
-                enabled = measurementState != MeasurementState.Measuring && 
-                         measurementState != MeasurementState.Preparing && 
-                         measurementState != MeasurementState.Processing,
-                modifier = Modifier
-                    .fillMaxWidth(0.8f)
-                    .height(56.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.primary
-                )
-            ) {
-                Text(
-                    text = when {
-                        measurementState == MeasurementState.Complete -> "Measure Again"
-                        measurementState == MeasurementState.Error -> "Retry Measurement"
-                        else -> "Start Measurement"
-                    },
-                    style = MaterialTheme.typography.titleMedium
-                )
-            }
+            // Action buttons
+            ActionButtons(measurementState, viewModel)
             
             Spacer(modifier = Modifier.height(16.dp))
             
             // Instructions
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.surfaceVariant
-                )
+            InstructionsCard(measurementState, isFingerDetected)
+        }
+    }
+}
+
+@Composable
+private fun StatusIndicator(
+    measurementState: MeasurementState,
+    signalQuality: SignalQuality,
+    isFingerDetected: Boolean
+) {
+    val statusText = when (measurementState) {
+        MeasurementState.Idle -> "Ready to measure"
+        MeasurementState.Preparing -> "Preparing camera..."
+        MeasurementState.Measuring -> if (isFingerDetected) {
+            when (signalQuality) {
+                SignalQuality.GOOD -> "Good signal quality"
+                SignalQuality.POOR -> "Poor signal quality - hold still"
+                SignalQuality.TOO_DARK -> "Signal too dark - adjust finger"
+                SignalQuality.TOO_BRIGHT -> "Signal too bright - adjust finger"
+                SignalQuality.UNKNOWN -> "Detecting signal..."
+            }
+        } else "Place finger on camera"
+        MeasurementState.Processing -> "Processing results..."
+        MeasurementState.Complete -> "Measurement complete"
+        MeasurementState.Error -> "Error measuring heart rate"
+    }
+    
+    val statusColor = when {
+        measurementState == MeasurementState.Error -> Color(0xFFF44336) // Red
+        measurementState == MeasurementState.Complete -> Color(0xFF4CAF50) // Green
+        isFingerDetected && signalQuality == SignalQuality.GOOD -> Color(0xFF4CAF50) // Green
+        isFingerDetected && signalQuality == SignalQuality.POOR -> Color(0xFFFFA726) // Orange
+        else -> Color(0xFF2196F3) // Blue
+    }
+    
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(containerColor = statusColor.copy(alpha = 0.15f))
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(12.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                imageVector = Icons.Default.Info,
+                contentDescription = null,
+                tint = statusColor
+            )
+            Spacer(modifier = Modifier.width(12.dp))
+            Text(
+                text = statusText,
+                color = statusColor,
+                fontWeight = FontWeight.Medium
+            )
+        }
+    }
+}
+
+@Composable
+private fun MeasurementDisplay(
+    measurementState: MeasurementState,
+    hasCameraPermission: Boolean,
+    isFingerDetected: Boolean,
+    progress: Int,
+    currentBpmEstimate: Int,
+    scale: Float, // Parameter kept for compatibility but not used anymore
+    context: android.content.Context,
+    lifecycleOwner: androidx.lifecycle.LifecycleOwner,
+    viewModel: HeartRateViewModel
+) {
+    Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+        // Camera preview or heart icon based on measurement state
+        if (hasCameraPermission && (measurementState == MeasurementState.Measuring || measurementState == MeasurementState.Preparing)) {
+            // Camera preview for measurement
+            Box(
+                modifier = Modifier
+                    .size(220.dp)
+                    .clip(CircleShape)
+                    .background(Color.Black),
+                contentAlignment = Alignment.Center
             ) {
-                Column(modifier = Modifier.padding(16.dp)) {
-                    Text(
-                        text = "How to measure your heart rate",
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold
+                // Progress indicator around the camera circle
+                CircularProgressIndicator(
+                    progress = { progress / 100f },
+                    modifier = Modifier
+                        .size(220.dp)
+                        .padding(4.dp),
+                    strokeWidth = 4.dp,
+                    trackColor = Color.Gray.copy(alpha = 0.3f),
+                    color = MaterialTheme.colorScheme.primary
+                )
+                
+                // Recording indicator in the corner
+                if (isFingerDetected) {
+                    Box(
+                        modifier = Modifier
+                            .align(Alignment.TopEnd)
+                            .padding(8.dp)
+                            .size(16.dp)
+                            .clip(CircleShape)
+                            .background(Color.Red)
                     )
-                    
-                    Spacer(modifier = Modifier.height(8.dp))
-                    
-                    Text(
-                        text = "1. Place your fingertip gently over the camera lens and flash",
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-                    
-                    Spacer(modifier = Modifier.height(4.dp))
-                    
-                    Text(
-                        text = "2. Keep your finger still during the measurement",
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-                    
-                    Spacer(modifier = Modifier.height(4.dp))
-                    
-                    Text(
-                        text = "3. Ensure your fingertip covers both the camera and flash completely",
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-                    
-                    Spacer(modifier = Modifier.height(4.dp))
-                    
-                    Text(
-                        text = "4. Wait for the measurement to complete (about 15 seconds)",
-                        style = MaterialTheme.typography.bodyMedium
-                    )
+                }
+                
+                // Static border
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .border(
+                            width = 4.dp,
+                            color = if (isFingerDetected) MaterialTheme.colorScheme.primary else Color.Gray,
+                            shape = CircleShape
+                        )
+                )
+
+                // Camera preview
+                AndroidView(
+                    factory = { context ->
+                        val previewView = PreviewView(context).apply {
+                            implementationMode = PreviewView.ImplementationMode.COMPATIBLE
+                            scaleType = PreviewView.ScaleType.FILL_CENTER
+                        }
+                        
+                        val cameraProviderFuture = ProcessCameraProvider.getInstance(context)
+                        cameraProviderFuture.addListener({
+                            val cameraProvider = cameraProviderFuture.get()
+                            val preview = Preview.Builder().build()
+                            preview.setSurfaceProvider(previewView.surfaceProvider)
+                            
+                            val imageAnalysis = ImageAnalysis.Builder()
+                                .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
+                                .build()
+                            
+                            val analyzer = HeartRateImageAnalyzer(viewModel)
+                            
+                            imageAnalysis.setAnalyzer(Executors.newSingleThreadExecutor(), analyzer)
+                            
+                            try {
+                                // Unbind all use cases before rebinding
+                                cameraProvider.unbindAll()
+                                
+                                // Bind use cases to camera - specify we want to use the back camera
+                                val camera = cameraProvider.bindToLifecycle(
+                                    lifecycleOwner,
+                                    CameraSelector.DEFAULT_BACK_CAMERA,
+                                    preview,
+                                    imageAnalysis
+                                )
+                                
+                                // Enable flash for better PPG signal
+                                analyzer.setCamera(camera)
+                            } catch (e: Exception) {
+                                e.printStackTrace()
+                            }
+                        }, ContextCompat.getMainExecutor(context))
+                        
+                        previewView
+                    },
+                    modifier = Modifier.fillMaxSize()
+                )
+                
+                // Show BPM estimate overlay if finger is detected and we have a valid estimate
+                if (isFingerDetected && currentBpmEstimate > 0) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(Color.Black.copy(alpha = 0.5f)),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Text(
+                                text = "$currentBpmEstimate",
+                                color = Color.White,
+                                fontSize = 36.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+                            Text(
+                                text = "BPM",
+                                color = Color.White,
+                                fontSize = 14.sp
+                            )
+                        }
+                    }
+                }
+            }
+        } else {
+            // Heart icon when not measuring
+            Box(
+                modifier = Modifier
+                    .size(220.dp)
+                    .clip(CircleShape)
+                    .background(MaterialTheme.colorScheme.primaryContainer),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Favorite,
+                    contentDescription = "Heart Rate",
+                    modifier = Modifier.size(100.dp),
+                    tint = MaterialTheme.colorScheme.primary
+                )
+                
+                // Show error or completion message
+                if (measurementState == MeasurementState.Error || measurementState == MeasurementState.Complete) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(Color.Black.copy(alpha = 0.5f)),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = if (measurementState == MeasurementState.Error) "Measurement Failed" 
+                                  else "Measurement Complete",
+                            color = Color.White,
+                            fontSize = 18.sp,
+                            fontWeight = FontWeight.Bold,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.padding(16.dp)
+                        )
+                    }
                 }
             }
         }
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
-@ComposePreview(showBackground = true)
 @Composable
-fun HeartRateMonitorScreenPreview() {
-    val navController = rememberNavController()
-    HeartRateMonitorScreen(
-        navController = navController,
-        onMeasurementComplete = {}
-    )
+private fun ActionButtons(
+    measurementState: MeasurementState,
+    viewModel: HeartRateViewModel
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceEvenly
+    ) {
+        when (measurementState) {
+            MeasurementState.Idle -> {
+                Button(
+                    onClick = { viewModel.startMeasurement() },
+                    modifier = Modifier.width(200.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.primary
+                    )
+                ) {
+                    Text("Start Measurement")
+                }
+            }
+            MeasurementState.Measuring, MeasurementState.Preparing -> {
+                Button(
+                    onClick = { viewModel.cancelMeasurement() },
+                    modifier = Modifier.width(200.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.error
+                    )
+                ) {
+                    Text("Cancel")
+                }
+            }
+            MeasurementState.Error -> {
+                Button(
+                    onClick = { viewModel.resetMeasurement() },
+                    modifier = Modifier.width(200.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.primary
+                    )
+                ) {
+                    Text("Try Again")
+                }
+            }
+            MeasurementState.Complete -> {
+                Button(
+                    onClick = { viewModel.resetMeasurement() },
+                    modifier = Modifier.width(200.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.primary
+                    )
+                ) {
+                    Text("New Measurement")
+                }
+            }
+            else -> { /* No buttons for other states */ }
+        }
+    }
+}
+
+@Composable
+private fun InstructionsCard(measurementState: MeasurementState, isFingerDetected: Boolean) {
+    AnimatedVisibility(
+        visible = measurementState == MeasurementState.Measuring && !isFingerDetected,
+        enter = fadeIn(),
+        exit = fadeOut()
+    ) {
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
+        ) {
+            Column(modifier = Modifier.padding(16.dp)) {
+                Text(
+                    text = "How to Measure",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold
+                )
+                
+                Spacer(modifier = Modifier.height(8.dp))
+                
+                Text("1. Place your fingertip gently over the camera lens")
+                Text("2. Make sure the flash is covered by your finger")
+                Text("3. Hold still until measurement completes")
+                Text("4. Ensure your finger isn't pressing too hard or too lightly")
+            }
+        }
+    }
 }
