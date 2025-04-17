@@ -198,60 +198,51 @@ fun VitalsScreen(
                         color = when (lastHeartRate!!.status) {
                             "Normal" -> Color.Green
                             "High" -> Color.Red
-                            "Low" -> Color(0xFFFFA000) // Amber
+                            "Low" -> Color.Blue
                             else -> MaterialTheme.colorScheme.onSurface
                         },
                         modifier = Modifier.padding(horizontal = 16.dp)
                     )
                 }
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                // Heart Rate Graph
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp),
-                    elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-                    colors = CardDefaults.cardColors(containerColor = Color.White)
-                ) {
-                    Column(modifier = Modifier.padding(16.dp)) {
-                        Text(
-                            text = "Heart Rate History",
-                            style = MaterialTheme.typography.titleLarge,
-                            fontWeight = FontWeight.Bold
+                
+                // Heart Rate Graph Card
+                if (heartRateHistory.isNotEmpty()) {
+                    Spacer(modifier = Modifier.height(16.dp))
+                    
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp),
+                        colors = CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.surface
                         )
-                        
-                        Spacer(modifier = Modifier.height(8.dp))
-                        
-                        if (heartRateHistory.isNotEmpty()) {
-                            HeartRateGraph(
-                                heartRateData = heartRateHistory,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(200.dp),
-                                lineColor = MaterialTheme.colorScheme.primary,
-                                backgroundColor = Color.White
+                    ) {
+                        Column(modifier = Modifier.padding(16.dp)) {
+                            Text(
+                                text = "Heart Rate History",
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.Bold
                             )
                             
-                            // Add a legend or explanation
                             Spacer(modifier = Modifier.height(8.dp))
-                            Text(
-                                text = "Your heart rate measurements over time",
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
-                            )
-                        } else {
-                            Text(
-                                text = "No heart rate data available. Take a measurement to see your history.",
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
-                                textAlign = TextAlign.Center,
-                                modifier = Modifier.padding(vertical = 32.dp).fillMaxWidth()
-                            )
-                        }
-                    }
-                }
+                            
+                            HeartRateGraph(
+                                  heartRateData = heartRateHistory,
+                                  modifier = Modifier
+                                      .fillMaxWidth()
+                                     .height(200.dp)
+                              )
+                              
+                              // Add a legend or explanation
+                              Spacer(modifier = Modifier.height(8.dp))
+                              Text(
+                                  text = "Your heart rate measurements over time",
+                                  style = MaterialTheme.typography.bodyMedium,
+                                  color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+                              )
+                          }
+                      }
+                  }
 
                 Spacer(modifier = Modifier.height(80.dp)) // Add bottom padding for FAB
             }

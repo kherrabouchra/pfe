@@ -36,11 +36,11 @@ class HeartRateViewModel : ViewModel() {
     
     // Configuration parameters
     private val measurementDuration = 30000L
-    private val maxMotionThreshold = 10.0  // Reduced to be more sensitive to motion artifacts
+    private val maxMotionThreshold = 15.0  // Increased to be more tolerant of motion during walking
     private val minValidHeartRate = 40  // Lowered to detect bradycardia
-    private val maxValidHeartRate = 120  // Lowered to prevent false high readings
-    private val minSignalAmplitude = 2.0  // Adjusted for better sensitivity
-    private val signalQualityThreshold = 0.7  // Increased for more reliable readings
+    private val maxValidHeartRate = 180  // Increased to allow higher heart rates during activity
+    private val minSignalAmplitude = 1.5  // Reduced for better sensitivity during movement
+    private val signalQualityThreshold = 0.5  // Reduced for more tolerance during activity
     
     // State flows
     private val _measurementState = MutableStateFlow<MeasurementState>(MeasurementState.Idle)
@@ -166,7 +166,7 @@ class HeartRateViewModel : ViewModel() {
             // Filter out unrealistic intervals
             val validIntervals = intervals.filter { interval ->
                 val instantBpm = (60.0 * 30.0 / interval).toInt() // Convert to BPM (30Hz sampling)
-                instantBpm in 45..120 // Only accept reasonable heart rates
+                instantBpm in 40..180 // Expanded range to accept higher heart rates during activity
             }
             
             if (validIntervals.isNotEmpty()) {
