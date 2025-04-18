@@ -3,7 +3,6 @@ package com.example.myapplication.ui.components
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.icons.materialIcon
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -24,7 +23,7 @@ fun MedicationCard(
     title: String,
     subtitle: String,
     time: String,
-    id: Int,
+    id: String,
     navController: NavController
 ) {
     Card(
@@ -98,7 +97,7 @@ fun MedicationCardPreview() {
         title = "Daily Exercise",
         subtitle = "30 minutes of moderate activity",
         time = "18:13",
-        id= 1,
-        navController= navController
+        id = "1",
+        navController = navController
     )
 }

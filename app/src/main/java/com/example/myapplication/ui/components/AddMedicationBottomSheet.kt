@@ -1,6 +1,7 @@
 package com.example.myapplication.ui.components
 
 import android.os.Build
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
@@ -26,14 +27,32 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.ViewModelProvider
 import com.example.myapplication.R
-import java.util.Calendar
+import com.example.myapplication.viewmodel.MedicationViewModel
+import java.time.LocalDateTime
+import android.app.Activity
+import android.content.Context
+import android.content.ContextWrapper
+import androidx.activity.ComponentActivity
+import androidx.compose.ui.platform.LocalView
+
+// Extension function to find the Activity from a Composable
+fun Context.findActivity(): Activity {
+    var context = this
+    while (context is ContextWrapper) {
+        if (context is Activity) return context
+        context = context.baseContext
+    }
+    throw IllegalStateException("Composable not attached to an activity")
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -58,7 +77,10 @@ fun AddMedicationBottomSheet(
     var is24Hour by remember { mutableStateOf(false) }
     
     val primaryColor = MaterialTheme.colorScheme.primary
-
+    val context = LocalContext.current
+    val view = LocalView.current
+    val activity = context.findActivity()
+    val viewModel = ViewModelProvider(activity as ComponentActivity)[MedicationViewModel::class.java]
     Box(modifier = Modifier.fillMaxWidth().background(Color.White)) {
         Column(
             modifier = Modifier
@@ -78,8 +100,9 @@ fun AddMedicationBottomSheet(
                     fontWeight = FontWeight.Bold
                 )
                 
-
-
+                IconButton(onClick = onDismiss) {
+                    Icon(Icons.Default.Close, contentDescription = "Close")
+                }
             }
     
 
@@ -514,18 +537,43 @@ fun AddMedicationBottomSheet(
             Spacer(modifier = Modifier.height(32.dp))
 
             Button(
-                onClick = {},
-                modifier = Modifier.padding(top = 8.dp).fillMaxWidth().height(48.dp),
+                onClick = {
+                    if (medicationName.isBlank()) {
+                        Toast.makeText(context, "Please enter medication name", Toast.LENGTH_SHORT).show()
+                        return@Button
+                    }
+                    
+                    val medicineTypes = listOf("Pill", "Capsule", "Syringe", "Drops")
+                    val dosage = "${quantity} ${medicineTypes[selectedMedicineType]}"
+                    val frequency = if (beforeFood) "Before Food" else "After Food"
+                    val timeOfDay = listOf(LocalDateTime.now().withHour(hour).withMinute(minute))
+                    val instructions = "Take $dosage $frequency"
+                    val userId = "user123" // Replace with actual user ID
+                    
+                    viewModel.addMedication(
+                        name = medicationName,
+                        dosage = dosage,
+                        frequency = frequency,
+                        timeOfDay = timeOfDay,
+                        instructions = instructions,
+                        userId = userId
+                    )
+                    
+                    onDismiss()
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(56.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.Black,
-                    contentColor = Color.White
+                    containerColor = MaterialTheme.colorScheme.primary
                 )
             ) {
-                Text(text = "Add Reminder"
-
+                Text(
+                    text = "Save Medication",
+                    style = MaterialTheme.typography.titleMedium,
+                    color = Color.White
                 )
             }
-    
 
             Spacer(modifier = Modifier.height(32.dp))
 
@@ -585,10 +633,4 @@ fun MedicineTypeOption(
             fontSize = 10.sp
         )
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun AddMedicationBottomSheetPreview() {
-    AddMedicationBottomSheet(onDismiss = {})
 }

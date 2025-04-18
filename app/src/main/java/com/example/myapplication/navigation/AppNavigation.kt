@@ -3,6 +3,8 @@ package com.example.myapplication.navigation
 import android.app.Activity
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -51,7 +53,7 @@ fun AppNavigation(
 
     NavHost(
         navController = navController,
-        startDestination = startDestination,
+        startDestination = startDestination
     ) {
         composable(Screen.Splash.route) {
             SplashScreenContent(
@@ -139,8 +141,15 @@ fun AppNavigation(
             ActivitiesScreen(navController)
         }
 
-        composable(Screen.Medication.route) {
-            MedicationScreen(navController)
+        composable(
+            route = Screen.Medication.route,
+            enterTransition = { EnterTransition.None },
+            exitTransition = { ExitTransition.None }
+        ) {
+            val medicationViewModel: MedicationViewModel = viewModel(
+                factory = MedicationViewModel.provideFactory()
+            )
+            MedicationScreen(navController = navController, medicationViewModel = medicationViewModel)
         }
 
 

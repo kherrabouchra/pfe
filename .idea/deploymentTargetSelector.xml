@@ -21,10 +21,10 @@
       </SelectionState>
       <SelectionState runConfigName="BetterApp">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2025-04-12T20:32:43.021049Z">
+        <DropdownSelection timestamp="2025-04-17T20:56:22.848776Z">
           <Target type="DEFAULT_BOOT">
             <handle>
-              <DeviceId pluginId="LocalEmulator" identifier="path=/Users/mac/.android/avd/Pixel_9_API_35.avd" />
+              <DeviceId pluginId="PhysicalDevice" identifier="serial=CB512BMH8F" />
             </handle>
           </Target>
         </DropdownSelection>

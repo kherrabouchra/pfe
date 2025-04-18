@@ -23,6 +23,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.myapplication.R
@@ -30,17 +31,33 @@ import com.example.myapplication.ui.components.HorizontalCalendar
 import com.example.myapplication.ui.components.MedicationCard
 import com.example.myapplication.ui.components.AddMedicationBottomSheet
 import com.example.myapplication.ui.components.BottomNavigationBar
-import com.example.myapplication.ui.components.DismissibleCard
+import com.example.myapplication.viewmodel.MedicationViewModel
+import java.time.LocalDate
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun MedicationScreen(navController: NavController) {
+fun MedicationScreen(
+    navController: NavController,
+    medicationViewModel: MedicationViewModel = viewModel()
+) {
     val bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = false)
     val scope = rememberCoroutineScope()
     var showBottomSheet by remember { mutableStateOf(false) }
     var currentRoute by remember { mutableStateOf("activities") }
+    
+    // Collect medications from ViewModel
+    val medications by medicationViewModel.medications.collectAsState()
+    val isLoading by medicationViewModel.isLoading.collectAsState()
+    
+    // Moved filteredMedications to the correct scope level
+    var selectedDate by remember { mutableStateOf(LocalDate.now()) }
+    val filteredMedications = medications.filter { medication ->
+        medication.timeOfDay.any { dateTime ->
+            dateTime.toLocalDate() == selectedDate
+        }
+    }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -87,7 +104,17 @@ fun MedicationScreen(navController: NavController) {
             Column(modifier = Modifier.fillMaxWidth().verticalScroll(rememberScrollState())) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
 
-                    HorizontalCalendar {}
+                    // Calendar with date selection to fetch medications for selected date
+                    // Removed duplicate selectedDate declaration
+                    // Removed duplicate filteredMedications declaration
+                    
+                    HorizontalCalendar(
+                        selectedDate = selectedDate,
+                        onDateSelected = { date ->
+                            selectedDate = date
+                            // Date selection is handled by the filtered medications above
+                        }
+                    )
 
                     Row(modifier = Modifier.padding(16.dp),
                         verticalAlignment = Alignment.CenterVertically){
@@ -122,7 +149,7 @@ fun MedicationScreen(navController: NavController) {
                             Image(
                                 painter = painterResource(id = R.drawable.remedy_rafiki),
                                 contentDescription = "medication",
-                                modifier = Modifier.size(130.dp).requiredSize(190.dp)
+                                modifier = Modifier.requiredSize(190.dp)
                             )
                         }
                     }
@@ -148,24 +175,40 @@ fun MedicationScreen(navController: NavController) {
                             modifier = Modifier.clickable { /* TODO: Handle navigation */ }
                         )
                     }
-                  /*  repeat(4) {
-                        MedicationCard(title = "Aspirin", subtitle = "Take with food", time = "18:13", id=1, navController)
-                    }*/
-
-                    Column (modifier =Modifier.fillMaxWidth(),
-                        horizontalAlignment = Alignment.CenterHorizontally){
-                        Spacer(modifier = Modifier.height(56.dp))
-                        Image(
-                            painter = painterResource(id = R.drawable.pillsearch),
-                            contentDescription = "medication",
-                            modifier = Modifier.size(130.dp).requiredSize(160.dp)
+                    if (isLoading) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.align(Alignment.CenterHorizontally)
                         )
-                        Text(
-                            text = "You have no medications\n reminders yet.",
-                            style = MaterialTheme.typography.titleSmall,
-                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
-                            textAlign = TextAlign.Center
-                        )
+                    } else if (filteredMedications.isEmpty()) {
+                        Column(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Spacer(modifier = Modifier.height(56.dp))
+                            Image(
+                                painter = painterResource(id = R.drawable.pillsearch),
+                                contentDescription = "medication",
+                                modifier = Modifier.size(160.dp)
+                            )
+                            Text(
+                                text = "You have no medications\n reminders yet.",
+                                style = MaterialTheme.typography.titleSmall,
+                                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
+                                textAlign = TextAlign.Center
+                            )
+                        }
+                    } else {
+                        filteredMedications.forEach { medication ->
+                            MedicationCard(
+                                title = medication.name,
+                                subtitle = "${medication.dosage} - ${medication.frequency}",
+                                time = medication.timeOfDay.firstOrNull()?.toLocalTime()?.let { 
+                                    String.format("%02d:%02d", it.hour, it.minute) 
+                                } ?: "",
+                                id = medication.id,
+                                navController = navController
+                            )
+                        }
                     }
                 }
                 Spacer(modifier = Modifier.height(342.dp))

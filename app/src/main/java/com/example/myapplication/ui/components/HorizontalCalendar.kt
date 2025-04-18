@@ -34,7 +34,7 @@ import java.util.*
 fun HorizontalCalendar(
     modifier: Modifier = Modifier,
     selectedDate: LocalDate = LocalDate.now(),
-    onDateSelected: (LocalDate) -> Unit
+    onDateSelected: (LocalDate) -> Unit = {}
 ) {
     var firstVisibleWeekOffset by remember { mutableStateOf(0L) }
     val currentDate = LocalDate.now()
